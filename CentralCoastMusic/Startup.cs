@@ -28,6 +28,7 @@ namespace CentralCoastMusic
             services.AddTransient<ArtistService>();
             services.AddTransient<DataService>();
             services.AddTransient<AuthService>();
+            services.AddTransient<Helper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

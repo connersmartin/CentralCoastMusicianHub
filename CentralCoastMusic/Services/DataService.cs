@@ -19,16 +19,21 @@ namespace CentralCoastMusic.Services
 
         //How do I want to data?
         private HttpClient _client = new HttpClient();
-        private string baseUrl = AppSettings.AppSetting["fireBaseUrl"];
+        private string baseUrl = AppSettings.AppSetting["firebaseBaseUrl"];
 
 
         //TODO clean up and test
         public async Task<byte[]> ApiGoogle(string method, string json, string sub,
             Dictionary<string, string> auth)
         {
-            var token = auth["token"];
-            //Make sure user is authorized
-            var authCheck = await _authService.Google(token);
+            var token = "";
+            var authCheck = "";
+            if (auth != null)
+            {
+                token = auth["token"];
+                //Make sure user is authorized
+                authCheck = await _authService.Google(token);
+            }
             var url = baseUrl + sub + ".json";
             var res = new HttpResponseMessage();
 

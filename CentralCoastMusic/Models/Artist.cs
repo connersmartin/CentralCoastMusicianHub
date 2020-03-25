@@ -9,7 +9,7 @@ namespace CentralCoastMusic.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public List<Link> Links { get; set; }
+        public List<string> Links { get; set; }
         public List<string> Genres { get; set; }
 
     }

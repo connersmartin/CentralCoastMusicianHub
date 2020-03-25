@@ -56,7 +56,7 @@ namespace CentralCoastMusic.Controllers
         }
 
         // GET: Artist/Create
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
             return View();
         }
@@ -64,12 +64,12 @@ namespace CentralCoastMusic.Controllers
         // POST: Artist/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Artist artist)
+        public async Task<ActionResult> Create(Artist artist)
         {
             try
             {
                 // TODO: Add insert logic here
-
+                await _artistService.AddArtist(new ArtistRequest());
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -79,15 +79,17 @@ namespace CentralCoastMusic.Controllers
         }
 
         // GET: Artist/Edit/5
-        public ActionResult Edit(string id)
+        public async Task<ActionResult> Edit(string id)
         {
+            await _artistService.GetArtists(id);
+
             return View();
         }
 
         // POST: Artist/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Artist artist)
+        public async Task<ActionResult> Edit(int id, Artist artist)
         {
             try
             {
@@ -102,7 +104,7 @@ namespace CentralCoastMusic.Controllers
         }
 
         // GET: Artist/Delete/5
-        public ActionResult Delete(string id)
+        public async Task<ActionResult> Delete(string id)
         {
             return View();
         }
@@ -110,7 +112,7 @@ namespace CentralCoastMusic.Controllers
         // POST: Artist/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(string id, IFormCollection collection)
+        public async Task<ActionResult> Delete(string id, IFormCollection collection)
         {
             try
             {
