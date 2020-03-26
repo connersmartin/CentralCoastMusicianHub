@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Central Coast Musician Hub";
 }
-
+<div><input id="search" /></div>
 <div id="artistContainer">
 
 </div>
@@ -20,6 +20,13 @@
             error: function(XMLHttpRequest, textStatus, errorThrown) {
                 $("#artistContainer")
                     .html("Oops, something went wrong, please try again: " + XMLHttpRequest.responseText);
+            }
+        });
+
+        
+        $('#search').keyup(function (e) {
+            if (e.keyCode == 13) {
+                searchArtist($('#search').val().trim());
             }
         });
 
@@ -44,6 +51,20 @@
         function backToIndex() {
             $("#artistContainer").show();
             $("#detailContainer").hide();
+        }
+
+        function searchArtist(searchText) {
+            $("#artistContainer").html("This may take a while, be patient");
+        $.ajax({
+            url: '/Music/Search/'+searchText,
+            success: function(data) {
+                $("#artistContainer").html(data);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                $("#artistContainer")
+                    .html("Oops, something went wrong, please try again: " + XMLHttpRequest.responseText);
+            }
+        });
         }
     </script>
 }

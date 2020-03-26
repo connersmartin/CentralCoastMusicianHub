@@ -23,11 +23,8 @@ namespace CentralCoastMusic.Controllers
         }
 
         //Gets all artists
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            /*
-            ViewData["Genres"] = await _artistService.GetGenres();
-            */
             return View();
         }
 
@@ -37,6 +34,12 @@ namespace CentralCoastMusic.Controllers
 
             return PartialView(artists);
         }
+        public async Task<IActionResult> Search(string id)
+        {
+            var artists = await _artistService.SearchArtists(id);
+            return PartialView("GetArtists", artists);
+        }
+
 
         public async Task<IActionResult> Details(string id)
         {

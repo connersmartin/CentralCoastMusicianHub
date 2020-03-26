@@ -11,8 +11,8 @@
     <div class="Login">
         <div>
             <h3>Login</h3>
-            <input type="text" id="logIn" name="userIn" placeholder="user" />
-            <input type="password" id="passIn" name="passwordIn" placeholder="pass" />
+            <input type="text" id="logIn" name="userIn" placeholder="Email" />
+            <input type="password" id="passIn" name="passwordIn" placeholder="Password" />
             <button id="login">Submit</button>
         </div>
         <span id="createLog">Or create a login</span>
@@ -21,8 +21,8 @@
     <div class="Create" style="display: none">
         <div>
             <h3>Create User</h3>
-            <input type="text" id="logCreate" name="userCreate" placeholder="user" />
-            <input type="password" id="passCreate" name="passwordCreate" placeholder="pass" />
+            <input type="text" id="logCreate" name="userCreate" placeholder="Email" />
+            <input type="password" id="passCreate" name="passwordCreate" placeholder="Password" />
             <button id="create">Submit</button>
         </div>
         <span id="reallyLog">Or log in</span>
@@ -45,8 +45,8 @@
         }
 
         $("#create").click(function () {
-            var log = $("#logCreate").val();
-            var pas = $("#passCreate").val();
+            var log = $("#logCreate").val().trim();
+            var pas = $("#passCreate").val().trim();
             firebase.auth().createUserWithEmailAndPassword(log, pas).then(function () {
                 loginAPI(true);
             },
@@ -68,8 +68,8 @@
         });
 
         $("#login").click(function () {
-            var log = $("#logIn").val();
-            var pas = $("#passIn").val();
+            var log = $("#logIn").val().trim();
+            var pas = $("#passIn").val().trim();
             firebase.auth().signInWithEmailAndPassword(log, pas).then(function (result) {
                 loginAPI(false);
             }).catch(function (error) {
@@ -95,8 +95,6 @@
                 },
                 success: function (data) {
                     window.location.href = "../Artist/Details";
-
-
                 }
             });
         }

@@ -25,7 +25,6 @@ namespace CentralCoastMusic.Controllers
             _authService = authService;
         }
 
-        // GET: Artist
         public ActionResult Index()
         {
             ViewData["jsSettings"] = AppSettings.AppSetting["jsSettings"];
@@ -42,7 +41,6 @@ namespace CentralCoastMusic.Controllers
             
         }
 
-        // GET: Artist/Details/5
         public async Task<IActionResult> Details()
         {
             var id = GetCookies();
@@ -57,14 +55,12 @@ namespace CentralCoastMusic.Controllers
             }
         }
 
-        // GET: Artist/Create
-        public async Task<ActionResult> Create()
+        public IActionResult Create()
         {
             var auth = GetCookies();
             return View();
         }
 
-        // POST: Artist/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(Artist artist)
@@ -87,7 +83,6 @@ namespace CentralCoastMusic.Controllers
             }
         }
 
-        // GET: Artist/Edit/5
         public async Task<ActionResult> Edit(string id)
         {
             var artist = await _artistService.GetArtist(id);
@@ -95,7 +90,6 @@ namespace CentralCoastMusic.Controllers
             return View(artist);
         }
 
-        // POST: Artist/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(Artist artist)
@@ -108,7 +102,6 @@ namespace CentralCoastMusic.Controllers
                     Auth = auth,
                     Artist = artist
                 };
-                // TODO: Add update logic here
                 await _artistService.EditArtist(artistRequest);
                 return RedirectToAction("Details");
             }
@@ -116,7 +109,7 @@ namespace CentralCoastMusic.Controllers
             {
                 return View();
             }
-        }
+        }        
 
         public IActionResult Privacy()
         {

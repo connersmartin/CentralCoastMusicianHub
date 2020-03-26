@@ -41,6 +41,28 @@ namespace CentralCoastMusic.Services
             return artists.Select(a=>a.Value).ToList();
         }
 
+        public async Task<List<Artist>> SearchArtists(string searchText)
+        {
+            var filteredArtists = new List<Artist>();
+            var artists = await GetArtists();
+            if (searchText == null)
+            {
+                return artists;
+            }
+            else
+            {
+                foreach (var artist in artists)
+                {
+                    if (artist.Name.ToLower().Contains(searchText.ToLower()))
+                    {
+                        filteredArtists.Add(artist);
+                    }
+                }
+
+                return filteredArtists;
+            }
+        }
+
         public async Task AddArtist(ArtistRequest artistRequest)
         {
             var json = JsonSerializer.Serialize(artistRequest.Artist);
