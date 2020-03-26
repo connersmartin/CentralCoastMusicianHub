@@ -118,23 +118,22 @@ namespace CentralCoastMusic.Controllers
             }
         }
 
-        /*/ POST: Artist/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(string id, IFormCollection collection)
+        public IActionResult Privacy()
         {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return View();
         }
-        */
+
+        public IActionResult Help()
+        {
+            return View();
+        }
+
+        public IActionResult Logout()
+        {
+            Remove("uid");
+            Remove("token");
+            return RedirectToAction("Index");
+        }
 
         #region Cookie Management
 

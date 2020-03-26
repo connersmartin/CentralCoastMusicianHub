@@ -1,6 +1,49 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Central Coast Musician Hub";
 }
 
+<div id="artistContainer">
 
+</div>
+<div id="detailContainer">
 
+</div>
+@section scripts{
+    <script>
+
+        $("#artistContainer").html("This may take a while, be patient");
+        $.ajax({
+            url: '/Music/GetArtists',
+            success: function(data) {
+                $("#artistContainer").html(data);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                $("#artistContainer")
+                    .html("Oops, something went wrong, please try again: " + XMLHttpRequest.responseText);
+            }
+        });
+
+        function getDetail(id) {
+            $("#artistContainer").hide();
+            $.ajax({
+                url: '/Music/Details/' + id,
+                success: function(data) {
+                    $("#detailContainer").html(data);
+                    $("#detailContainer").show();
+
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    $("#detailContainer")
+                        .html("Oops, something went wrong, please try again: " + XMLHttpRequest.responseText);
+                    $("#detailContainer").show();
+
+                }
+            });
+        }
+
+        function backToIndex() {
+            $("#artistContainer").show();
+            $("#detailContainer").hide();
+        }
+    </script>
+}

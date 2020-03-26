@@ -18,6 +18,7 @@ namespace CentralCoastMusic.Models
         public string Venmo { get; set; }
         public string Livestream { get; set; }
         public DateTime NextLivestream { get; set; }
+        public bool Verified { get; set; }
         //public List<string> Genres { get; set; }
 
     }

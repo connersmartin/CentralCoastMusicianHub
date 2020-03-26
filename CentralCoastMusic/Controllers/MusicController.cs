@@ -26,13 +26,32 @@ namespace CentralCoastMusic.Controllers
         public async Task<IActionResult> Index()
         {
             /*
-            var model = await _artistService.GetArtists();
             ViewData["Genres"] = await _artistService.GetGenres();
             */
             return View();
-        }       
+        }
 
-        public IActionResult Privacy()
+        public async Task<IActionResult> GetArtists()
+        {
+            var artists = await _artistService.GetArtists();
+
+            return PartialView(artists);
+        }
+
+        public async Task<IActionResult> Details(string id)
+        {
+            var artist = await _artistService.GetArtist(id);
+            if (artist != null)
+            {
+                return PartialView(artist);
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
+        }
+
+        public IActionResult About()
         {
             return View();
         }

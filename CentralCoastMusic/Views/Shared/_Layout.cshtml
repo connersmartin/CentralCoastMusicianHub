@@ -27,6 +27,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Artist" asp-action="Privacy">Privacy</a>
                         </li>
+                        @if (Context.Request.Cookies["uid"] != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Artist" asp-action="Logout">Log Out</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
