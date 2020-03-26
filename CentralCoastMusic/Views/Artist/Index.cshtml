@@ -86,15 +86,15 @@
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("Accept", "application/json");
                     xhr.setRequestHeader("Content-Type", "application/json");
-                    xhr.setRequestHeader("Authorization", "Bearer " + firebase.auth().currentUser.ra);
+                    xhr.setRequestHeader("Authorization", "Bearer " + firebase.auth().currentUser.xa);
                     xhr.setRequestHeader("Uid", firebase.auth().currentUser.uid);
-                    xhr.setRequestHeader("Token", firebase.auth().currentUser.ra);
+                    xhr.setRequestHeader("Token", firebase.auth().currentUser.xa);
                 },
                 error: function (ex) {
                     alert("error? " + ex.status + " - " + ex.statusText);
                 },
                 success: function (data) {
-                    window.location.href = "../Artist/Index";
+                    window.location.href = "../Artist/Details";
 
 
                 }

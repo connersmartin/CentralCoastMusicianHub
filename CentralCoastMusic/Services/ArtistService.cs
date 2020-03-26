@@ -26,30 +26,31 @@ namespace CentralCoastMusic.Services
 
         }
 
-        public async Task<List<Artist>> GetArtists(string id = null)
+        public async Task<Artist> GetArtist(string id = null)
         {
-            string artistId = null;
-            if (id!=null)
-            {
-                artistId = "/" + id;
-            }
-            var artistResponse = await _dataService.ApiGoogle("GET", null, "Artists"+artistId, null);
+            var artistResponse = await _dataService.ApiGoogle("GET", null, "Artists/" + id, null);
+            var artist = _helper.Mapper<Artist>(artistResponse);
+            return artist;
+        }
+
+        public async Task<List<Artist>> GetArtists()
+        {
+            var artistResponse = await _dataService.ApiGoogle("GET", null, "Artists", null);
             var artists = _helper.Mapper<List<Artist>>(artistResponse);
             return artists;
-
         }
 
         public async Task AddArtist(ArtistRequest artistRequest)
         {
-            var json = JsonSerializer.Serialize(artistRequest);
-            var artistResponse = await _dataService.ApiGoogle("PUT", json, "Artists", artistRequest.Auth);
+            var json = JsonSerializer.Serialize(artistRequest.Artist);
+            var artistResponse = await _dataService.ApiGoogle("PUT", json, "Artists/" + artistRequest.Auth["uid"], artistRequest.Auth);
 
            
         }
 
         public async Task EditArtist(ArtistRequest artistRequest)
         {
-            var json = JsonSerializer.Serialize(artistRequest);
+            var json = JsonSerializer.Serialize(artistRequest.Artist);
             var artistResponse = await _dataService.ApiGoogle("PATCH", json, "Artists/"+artistRequest.Auth["uid"], artistRequest.Auth);
         }
         /*

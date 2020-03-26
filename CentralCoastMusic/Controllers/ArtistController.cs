@@ -33,7 +33,7 @@ namespace CentralCoastMusic.Controllers
             //Check to see if logged in
             if (dict["uid"] != null && dict["token"] != null)
             {
-                return View("Details");
+                return RedirectToAction("Details");
             }
             else
             {                
@@ -46,10 +46,10 @@ namespace CentralCoastMusic.Controllers
         public async Task<IActionResult> Details()
         {
             var id = GetCookies();
-            var artist = await _artistService.GetArtists(id["uid"]);
-            if (artist.Count>0)
+            var artist = await _artistService.GetArtist(id["uid"]);
+            if (artist!=null)
             {
-                return View(artist.FirstOrDefault());
+                return View(artist);
             }
             else
             {
@@ -61,7 +61,7 @@ namespace CentralCoastMusic.Controllers
         public async Task<ActionResult> Create()
         {
             var auth = GetCookies();
-            return View(new Artist() { Id = auth["uid"] });
+            return View();
         }
 
         // POST: Artist/Create
@@ -70,6 +70,7 @@ namespace CentralCoastMusic.Controllers
         public async Task<ActionResult> Create(Artist artist)
         {
             var auth = GetCookies();
+            artist.Id = auth["uid"];
             try
             {
                 var artistRequest = new ArtistRequest()
@@ -77,9 +78,8 @@ namespace CentralCoastMusic.Controllers
                     Auth = auth,
                     Artist = artist
                 };
-                // TODO: Add insert logic here
                 await _artistService.AddArtist(artistRequest);
-                return RedirectToAction("Dashboard");
+                return RedirectToAction("Details");
             }
             catch
             {
@@ -90,7 +90,7 @@ namespace CentralCoastMusic.Controllers
         // GET: Artist/Edit/5
         public async Task<ActionResult> Edit(string id)
         {
-            var artist = await _artistService.GetArtists(id);
+            var artist = await _artistService.GetArtist(id);
 
             return View(artist);
         }
@@ -110,7 +110,7 @@ namespace CentralCoastMusic.Controllers
                 };
                 // TODO: Add update logic here
                 await _artistService.EditArtist(artistRequest);
-                return RedirectToAction("Dashboard");
+                return RedirectToAction("Details");
             }
             catch
             {
