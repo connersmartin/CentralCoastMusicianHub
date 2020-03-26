@@ -25,10 +25,11 @@ namespace CentralCoastMusic.Controllers
         //Gets all artists
         public async Task<IActionResult> Index()
         {
+            /*
             var model = await _artistService.GetArtists();
             ViewData["Genres"] = await _artistService.GetGenres();
-
-            return View(model);
+            */
+            return View();
         }       
 
         public IActionResult Privacy()

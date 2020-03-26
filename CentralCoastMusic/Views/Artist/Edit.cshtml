@@ -1,0 +1,78 @@
+﻿@model CentralCoastMusic.Models.Artist
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Artist</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImageLink" class="control-label"></label>
+                <input asp-for="ImageLink" class="form-control" />
+                <span asp-validation-for="ImageLink" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Youtube" class="control-label"></label>
+                <input asp-for="Youtube" class="form-control" />
+                <span asp-validation-for="Youtube" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Instagram" class="control-label"></label>
+                <input asp-for="Instagram" class="form-control" />
+                <span asp-validation-for="Instagram" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Facebook" class="control-label"></label>
+                <input asp-for="Facebook" class="form-control" />
+                <span asp-validation-for="Facebook" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Patreon" class="control-label"></label>
+                <input asp-for="Patreon" class="form-control" />
+                <span asp-validation-for="Patreon" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Paypal" class="control-label"></label>
+                <input asp-for="Paypal" class="form-control" />
+                <span asp-validation-for="Paypal" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Venmo" class="control-label"></label>
+                <input asp-for="Venmo" class="form-control" />
+                <span asp-validation-for="Venmo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Livestream" class="control-label"></label>
+                <input asp-for="Livestream" class="form-control" />
+                <span asp-validation-for="Livestream" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NextLivestream" class="control-label"></label>
+                <input asp-for="NextLivestream" class="form-control" />
+                <span asp-validation-for="NextLivestream" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

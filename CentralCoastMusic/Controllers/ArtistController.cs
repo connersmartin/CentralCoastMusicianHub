@@ -33,7 +33,7 @@ namespace CentralCoastMusic.Controllers
             //Check to see if logged in
             if (dict["uid"] != null && dict["token"] != null)
             {
-                return View("Dashboard");
+                return View("Details");
             }
             else
             {                
@@ -42,23 +42,26 @@ namespace CentralCoastMusic.Controllers
             
         }
 
-        public ActionResult Dashboard()
-        {
-            //This will show their profile and edit options
-            return View();
-        }
-
         // GET: Artist/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details()
         {
-            await _artistService.GetArtists(id);
-            return View();
+            var id = GetCookies();
+            var artist = await _artistService.GetArtists(id["uid"]);
+            if (artist.Count>0)
+            {
+                return View(artist.FirstOrDefault());
+            }
+            else
+            {
+                return RedirectToAction("Create");
+            }
         }
 
         // GET: Artist/Create
         public async Task<ActionResult> Create()
         {
-            return View();
+            var auth = GetCookies();
+            return View(new Artist() { Id = auth["uid"] });
         }
 
         // POST: Artist/Create
@@ -66,11 +69,17 @@ namespace CentralCoastMusic.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(Artist artist)
         {
+            var auth = GetCookies();
             try
             {
+                var artistRequest = new ArtistRequest()
+                {
+                    Auth = auth,
+                    Artist = artist
+                };
                 // TODO: Add insert logic here
-                await _artistService.AddArtist(new ArtistRequest());
-                return RedirectToAction(nameof(Index));
+                await _artistService.AddArtist(artistRequest);
+                return RedirectToAction("Dashboard");
             }
             catch
             {
@@ -81,21 +90,27 @@ namespace CentralCoastMusic.Controllers
         // GET: Artist/Edit/5
         public async Task<ActionResult> Edit(string id)
         {
-            await _artistService.GetArtists(id);
+            var artist = await _artistService.GetArtists(id);
 
-            return View();
+            return View(artist);
         }
 
         // POST: Artist/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, Artist artist)
+        public async Task<ActionResult> Edit(Artist artist)
         {
+            var auth = GetCookies();
             try
             {
+                var artistRequest = new ArtistRequest()
+                {
+                    Auth = auth,
+                    Artist = artist
+                };
                 // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
+                await _artistService.EditArtist(artistRequest);
+                return RedirectToAction("Dashboard");
             }
             catch
             {
@@ -103,13 +118,7 @@ namespace CentralCoastMusic.Controllers
             }
         }
 
-        // GET: Artist/Delete/5
-        public async Task<ActionResult> Delete(string id)
-        {
-            return View();
-        }
-
-        // POST: Artist/Delete/5
+        /*/ POST: Artist/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(string id, IFormCollection collection)
@@ -125,6 +134,7 @@ namespace CentralCoastMusic.Controllers
                 return View();
             }
         }
+        */
 
         #region Cookie Management
 

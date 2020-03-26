@@ -9,8 +9,16 @@ namespace CentralCoastMusic.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public List<string> Links { get; set; }
-        public List<string> Genres { get; set; }
+        public string ImageLink { get; set; }
+        public string Youtube { get; set; }
+        public string Instagram { get; set; }
+        public string Facebook { get; set; }
+        public string Patreon { get; set; }
+        public string Paypal { get; set; }
+        public string Venmo { get; set; }
+        public string Livestream { get; set; }
+        public DateTime NextLivestream { get; set; }
+        //public List<string> Genres { get; set; }
 
     }
 }

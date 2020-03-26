@@ -7,7 +7,7 @@ namespace CentralCoastMusic.Models
 {
     public class ArtistRequest
     {
-        public string Auth { get; set; }
+        public Dictionary<string,string> Auth { get; set; }
         public Artist Artist { get; set; }
     }
 }
