@@ -36,9 +36,11 @@ namespace CentralCoastMusic.Services
         public async Task<List<Artist>> GetArtists()
         {
             var artistResponse = await _dataService.ApiGoogle("GET", null, "Artists", null);
-            var artists = _helper.Mapper<Dictionary<string,Artist>>(artistResponse);
-            
-            return artists.Select(a=>a.Value).ToList();
+            var artists = _helper.Mapper<Dictionary<string, Artist>>(artistResponse);
+
+            return artists.Select(a => a.Value).ToList();
+
+            //return MockService.LoadJson();
         }
 
         public async Task<List<Artist>> SearchArtists(string searchText)
