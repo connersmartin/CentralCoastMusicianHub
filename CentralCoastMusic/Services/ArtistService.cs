@@ -68,9 +68,7 @@ namespace CentralCoastMusic.Services
         public async Task AddArtist(ArtistRequest artistRequest)
         {
             var json = JsonSerializer.Serialize(artistRequest.Artist);
-            var artistResponse = await _dataService.ApiGoogle("PUT", json, "Artists/" + artistRequest.Auth["uid"], artistRequest.Auth);
-
-           
+            var artistResponse = await _dataService.ApiGoogle("PUT", json, "Artists/" + artistRequest.Auth["uid"], artistRequest.Auth);    
         }
 
         public async Task EditArtist(ArtistRequest artistRequest)

@@ -14,11 +14,13 @@ namespace CentralCoastMusic.Models
         public string Instagram { get; set; }
         public string Facebook { get; set; }
         public string Patreon { get; set; }
-        public string Paypal { get; set; }
-        public string Venmo { get; set; }
+        public string Twitter { get; set; }
+        public string Donation { get; set; }
         public string Livestream { get; set; }
         public DateTime? NextLivestream { get; set; }
         public bool Verified { get; set; }
+        public string CustomUrl { get; set; }
+
         //public List<string> Genres { get; set; }
 
     }

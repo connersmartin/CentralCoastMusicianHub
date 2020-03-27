@@ -25,9 +25,9 @@
 
         
         $('#search').keyup(function (e) {
-            if (e.keyCode == 13) {
+            
                 searchArtist($('#search').val().trim());
-            }
+            
         });
 
         function getDetail(id) {
@@ -54,7 +54,7 @@
         }
 
         function searchArtist(searchText) {
-            $("#artistContainer").html("This may take a while, be patient");
+           
         $.ajax({
             url: '/Music/Search/'+searchText,
             success: function(data) {

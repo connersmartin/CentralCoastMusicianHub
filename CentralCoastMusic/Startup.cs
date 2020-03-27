@@ -26,6 +26,7 @@ namespace CentralCoastMusic
         {
             services.AddControllersWithViews();
             services.AddTransient<ArtistService>();
+            services.AddTransient<LinkService>();
             services.AddTransient<DataService>();
             services.AddTransient<AuthService>();
             services.AddTransient<Helper>();
