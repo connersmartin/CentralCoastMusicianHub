@@ -1,0 +1,7 @@
+﻿@model IEnumerable<CentralCoastMusic.Models.Link>
+
+@foreach (var item in Model)
+{
+    <div id="@item.Id" onclick="streamRemove('@item.Id')"><span>-</span>@item.Name on @item.Attribute viewable at @item.Value</div>
+}
+

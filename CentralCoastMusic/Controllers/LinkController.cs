@@ -18,6 +18,33 @@ namespace CentralCoastMusic.Controllers
             _tagService = tagService;
             _linkService = linkService;
         }
+        public async Task<IActionResult> GetLinks()
+        {
+            HttpContext.Request.Cookies.TryGetValue("uid", out string user);
+            HttpContext.Request.Cookies.TryGetValue("token", out string token);
+            var auth = new Dictionary<string, string>()
+            {
+                {"uid", user },
+                {"token",token }
+            };
+            var linkResponse = await _linkService.GetLinks(auth["uid"]);
+            var linkList = linkResponse.Select(l => l.Value).ToList();
+            return PartialView(linkList);
+        }
+
+        public async Task<IActionResult> GetTags()
+        {
+            HttpContext.Request.Cookies.TryGetValue("uid", out string user);
+            HttpContext.Request.Cookies.TryGetValue("token", out string token);
+            var auth = new Dictionary<string, string>()
+            {
+                {"uid", user },
+                {"token",token }
+            };
+            var tagResponse = await _tagService.GetTags(auth["uid"]);
+            var tagList = tagResponse.Select(l => l.Value).ToList();
+            return PartialView(tagList);
+        }
 
         public async Task<string> AddTag([FromBody] Link link)
         {

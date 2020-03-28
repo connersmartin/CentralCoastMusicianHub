@@ -1,0 +1,8 @@
+﻿@model IEnumerable<CentralCoastMusic.Models.Link>
+
+@foreach (var item in Model)
+{
+    <input id="@item.Id" value="@item.Name" onclick="tagRemove('@item.Id')" />
+
+}
+

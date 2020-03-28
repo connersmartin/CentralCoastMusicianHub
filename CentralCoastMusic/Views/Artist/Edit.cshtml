@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form id="artistEditor">
+        <form id="artistEditor" asp-action="Edit">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
             <label asp-for="Name" class="control-label"></label>
@@ -67,7 +67,7 @@
             <div id="livestreamList" name ="livestreamList"></div>
         </div>
         <div class="form-group">
-            <div onclick="submitForm()" class="btn btn-primary"></div>
+            <button type="submit" class="btn btn-primary"></button>
         </div>
         </form>
     </div>
@@ -81,20 +81,53 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
 <script>
-    var tagCounter=0
-    function addTag() {
-        var tagObj = new Object();
-        tagObj.Name = $('#tags').val();
+
+   
+        getTags();
+        getStreams();
+   
+
+    function getTags() {
         $.ajax({
-            type: "POST",
-            url: "../../Link/AddTag",
-            contentType: 'application/json',
-            data: JSON.stringify(tagObj),
+            type: "GET",
+            url: "../../Link/GetTags",
             success: function (data) {
-                var dataStr = "'" + data + "'";
-                $('#tagList').append('<input id="' + data + '" value="' + $('#tags').val() + '" onclick="tagRemove(' + dataStr + ')"/>'); $('#tags').val('');
+                $('#tagList').html(data);
             }
         });
+    }
+
+    function getStreams() {
+        $.ajax({
+            type: "GET",
+            url: "../../Link/GetLinks",           
+            success: function (data) {
+                $('#livestreamList').html(data);
+            }
+        });
+    }
+
+    var tagCounter=0
+    function addTag() {
+        if ($('#tagList').children('input').length < 3) {
+
+
+            var tagObj = new Object();
+            tagObj.Name = $('#tags').val();
+            $.ajax({
+                type: "POST",
+                url: "../../Link/AddTag",
+                contentType: 'application/json',
+                data: JSON.stringify(tagObj),
+                success: function (data) {
+                    var dataStr = "'" + data + "'";
+                    $('#tagList').append('<input id="' + data + '" value="' + $('#tags').val() + '" onclick="tagRemove(' + dataStr + ')"/>'); $('#tags').val('');
+                }
+            });
+        } else {
+            $('#tags').val('');
+            $('#tags').attr('placeholder','Please remove a tag to add a new one');
+        }
     }
 
     function addLivestream() {
@@ -105,9 +138,9 @@
 
         $.ajax({
             type: "POST",
-            url: "../../Link/AddStream",
+            url: "../../Link/AddLink",
             contentType : 'application/json',
-            data: JSON.stringify(tagObj),
+            data: JSON.stringify(streamObj),
             success: function (data) {
                 var dataStr = "'" + data + "'";
                 $('#livestreamList').append('<div id="'+data+'" onclick="streamRemove('+dataStr+')"><span>-</span>' + $('#streamDesc').val() + ' on ' + $('#streamDate').val() + ' viewable at ' + $('#streamLink').val() + '</div>');
@@ -122,7 +155,9 @@
             url: "../../Link/RemoveTag/"+id,
             contentType : 'application/json',            
             success: function (data) {
-                $('#'+id).remove();               
+                $('#' + id).remove();  
+                            $('#tags').attr('placeholder','Enter three genres that describe your music');
+
             }
         });
     }
@@ -130,7 +165,7 @@
     function streamRemove(id) {
         $.ajax({
             type: "POST",
-            url: "../../Link/RemoveStream/"+id,
+            url: "../../Link/RemoveLink/"+id,
             contentType : 'application/json',            
             success: function (data) {
                 $('#'+id).remove();               
@@ -138,10 +173,6 @@
         });
     }
 
-    function submitForm() {
-        var a = $('#artistEditor');
-var submitData = $('#artistEditor')['0'];
-}
 
 
 </script>
