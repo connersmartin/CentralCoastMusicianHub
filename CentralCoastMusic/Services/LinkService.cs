@@ -15,24 +15,29 @@ namespace CentralCoastMusic.Services
         {
             _dataService = dataService;
         }
-        public async Task<List<string>> GetLinks(string id)
+        public async Task<Dictionary<string, Link>> GetLinks(string id)
         {
             var linkResponse = await _dataService.ApiGoogle("GET", null, "Links/" + id, null);
-            var linkList = JsonSerializer.Deserialize<List<string>>(linkResponse);
+            var linkList = JsonSerializer.Deserialize<Dictionary<string, Link>>(linkResponse);
             return linkList;
         }
 
-        public async Task AddLinks(LinkRequest linkRequest)
+        public async Task<string> AddLink(LinkRequest linkRequest)
         {
+            linkRequest.Link.Id = Guid.NewGuid().ToString();
+            var path = "Links/" + linkRequest.Auth["uid"] + "/" + linkRequest.Link.Id;
             var json = JsonSerializer.Serialize(linkRequest.Link);
-            var linkResponse = await _dataService.ApiGoogle("PUT", json, "Links/" + linkRequest.Auth["uid"], linkRequest.Auth);
-         
+            var linkResponse = await _dataService.ApiGoogle("PUT", json, path, linkRequest.Auth);
+
+            var link = JsonSerializer.Deserialize<Link>(linkResponse);
+
+            return link.Id;
         }
 
-        public async Task RemoveLinks(LinkRequest linkRequest)
+        public async Task RemoveLink(LinkRequest linkRequest)
         {
-            var json = JsonSerializer.Serialize(linkRequest.Link);
-            var linkResponse = await _dataService.ApiGoogle("PATCH", json, "Links/" + linkRequest.Auth["uid"], linkRequest.Auth);
+            var path = "Links/" + linkRequest.Auth["uid"] + "/" + linkRequest.Link.Id;
+            var linkResponse = await _dataService.ApiGoogle("PATCH", null, path, linkRequest.Auth);
 
         }
     }

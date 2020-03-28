@@ -28,6 +28,7 @@ namespace CentralCoastMusic
             services.AddTransient<ArtistService>();
             services.AddTransient<LinkService>();
             services.AddTransient<DataService>();
+            services.AddTransient<TagService>();
             services.AddTransient<AuthService>();
             services.AddTransient<Helper>();
         }
