@@ -16,13 +16,13 @@ namespace CentralCoastMusic.Controllers
         private readonly ArtistService _artistService;
         private readonly AuthService _authService;
         private readonly TagService _tagService;
-        private readonly LinkService _linkService;
+        private readonly StreamService _linkService;
 
         public ArtistController(ILogger<ArtistController> logger,
                                 ArtistService artistService,
                                 AuthService authService,
                                 TagService tagService,
-                                LinkService linkService)
+                                StreamService linkService)
         {
             _logger = logger;
             _artistService = artistService;
@@ -51,6 +51,8 @@ namespace CentralCoastMusic.Controllers
         {
             var id = GetCookies();
             var artist = await _artistService.GetArtist(id["uid"]);
+            //ViewData["Tags"] = await _tagService.GetTags(id["uid"]);
+            //ViewData["Streams"] = await _linkService.GetStreams(id["uid"]);
             if (artist!=null)
             {
                 return View(artist);
@@ -92,8 +94,8 @@ namespace CentralCoastMusic.Controllers
         public async Task<ActionResult> Edit(string id)
         {
             var artist = await _artistService.GetArtist(id);
-            ViewData["Tags"] = await _tagService.GetTags(id);
-            ViewData["Streams"] = await _linkService.GetLinks(id);
+            //ViewData["Tags"] = await _tagService.GetTags(id);
+            //ViewData["Streams"] = await _streamService.GetStreams(id);
 
             return View(artist);
         }

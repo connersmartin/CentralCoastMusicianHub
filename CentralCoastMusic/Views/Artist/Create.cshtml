@@ -18,11 +18,6 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ImageLink" class="control-label"></label>
-                <input asp-for="ImageLink" class="form-control" />
-                <span asp-validation-for="ImageLink" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Youtube" class="control-label"></label>
                 <input asp-for="Youtube" class="form-control" />
                 <span asp-validation-for="Youtube" class="text-danger"></span>
@@ -53,14 +48,17 @@
                 <span asp-validation-for="Donation" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Livestream" class="control-label"></label>
-                <input asp-for="Livestream" class="form-control" />
-                <span asp-validation-for="Livestream" class="text-danger"></span>
+                <div>Will have image uploads here</div>
             </div>
-            <div class="form-group">
-                <label asp-for="NextLivestream" class="control-label"></label>
-                <input asp-for="NextLivestream" class="form-control" />
-                <span asp-validation-for="NextLivestream" class="text-danger"></span>
+            <div class="form-group" id="tagContainer" name="tagContainer">
+                <input class="form-control" id="tags" placeholder="Enter three genres that describe your music" /><span onclick="addTag()">+</span>
+                <div id="tagList" name="tagList"></div>
+            </div>
+            <div class="form-group" id="livestreamContainer" name="livestreamContainer">
+                <div id="livestreamInput">
+                    <input class="form-control" id="streamDesc" placeholder="Decribe your stream" maxlength="30" /><input class="form-control" id="streamDate" type="datetime-local" /><input class="form-control" id="streamLink" placeholder="Link to your livestream" /><span onclick="addLivestream()">+</span>
+                </div>
+                <div id="livestreamList" name="livestreamList"></div>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -75,4 +73,71 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>     
+
+        var tagCounter = 0
+        function addTag() {
+            if ($('#tagList').children('input').length < 3) {
+                var tagObj = new Object();
+                tagObj.Name = $('#tags').val();
+                $.ajax({
+                    type: "POST",
+                    url: "../../Link/AddTag",
+                    contentType: 'application/json',
+                    data: JSON.stringify(tagObj),
+                    success: function (data) {
+                        var dataStr = "'" + data + "'";
+                        $('#tagList').append('<input id="' + data + '" value="' + $('#tags').val() + '" onclick="tagRemove(' + dataStr + ')"/>'); $('#tags').val('');
+                    }
+                });
+            } else {
+                $('#tags').val('');
+                $('#tags').attr('placeholder', 'Please remove a tag to add a new one');
+            }
+        }
+
+        function addLivestream() {
+            var streamObj = new Object();
+            streamObj.Name = $('#streamDesc').val();
+            streamObj.Description = $('#streamLink').val();
+            streamObj.StartTime = $('#streamDate').val();
+
+            $.ajax({
+                type: "POST",
+                url: "../../Link/AddStream",
+                contentType: 'application/json',
+                data: JSON.stringify(streamObj),
+                success: function (data) {
+                    var dataStr = "'" + data + "'";
+                    $('#livestreamList').append('<div id="' + data + '" onclick="streamRemove(' + dataStr + ')"><span>-</span>' + $('#streamDesc').val() + ' on ' + $('#streamDate').val() + ' viewable at ' + $('#streamLink').val() + '</div>');
+                    $('#livestreamInput').find('input').val('');
+                }
+            });
+        }
+
+        function tagRemove(id) {
+            $.ajax({
+                type: "POST",
+                url: "../../Link/RemoveTag/" + id,
+                contentType: 'application/json',
+                success: function (data) {
+                    $('#' + id).remove();
+                    $('#tags').attr('placeholder', 'Enter three genres that describe your music');
+
+                }
+            });
+        }
+
+        function streamRemove(id) {
+            $.ajax({
+                type: "POST",
+                url: "../../Link/RemoveStream/" + id,
+                contentType: 'application/json',
+                success: function (data) {
+                    $('#' + id).remove();
+                }
+            });
+        }
+    </script>
+
 }

@@ -11,14 +11,14 @@ namespace CentralCoastMusic.Controllers
     public class LinkController : Controller
     {
         private readonly TagService _tagService;
-        private readonly LinkService _linkService;
+        private readonly StreamService _streamService;
 
-        public LinkController(TagService tagService,LinkService linkService)
+        public LinkController(TagService tagService,StreamService streamService)
         {
             _tagService = tagService;
-            _linkService = linkService;
+            _streamService = streamService;
         }
-        public async Task<IActionResult> GetLinks()
+        public async Task<IActionResult> GetStreams()
         {
             HttpContext.Request.Cookies.TryGetValue("uid", out string user);
             HttpContext.Request.Cookies.TryGetValue("token", out string token);
@@ -27,8 +27,8 @@ namespace CentralCoastMusic.Controllers
                 {"uid", user },
                 {"token",token }
             };
-            var linkResponse = await _linkService.GetLinks(auth["uid"]);
-            var linkList = linkResponse.Select(l => l.Value).ToList();
+            var streamResponse = await _streamService.GetStreams(auth["uid"]);
+            var linkList = streamResponse.Select(l => l.Value).ToList();
             return PartialView(linkList);
         }
 
@@ -46,7 +46,7 @@ namespace CentralCoastMusic.Controllers
             return PartialView(tagList);
         }
 
-        public async Task<string> AddTag([FromBody] Link link)
+        public async Task<string> AddTag([FromBody] Tag tag)
         {
 
             HttpContext.Request.Cookies.TryGetValue("uid", out string user);
@@ -56,7 +56,7 @@ namespace CentralCoastMusic.Controllers
                 {"uid", user },
                 {"token",token }
             };
-            var tagResponse = await _tagService.AddTag(new LinkRequest() { Auth = auth, Link = link });
+            var tagResponse = await _tagService.AddTag(new TagRequest() { Auth = auth, Tag = tag });
             return tagResponse;
         }
 
@@ -69,10 +69,10 @@ namespace CentralCoastMusic.Controllers
                 {"uid", user },
                 {"token",token }
             };            
-            await _tagService.RemoveTag(new LinkRequest() { Auth = auth, Link = new Link() { Id = id } });
+            await _tagService.RemoveTag(new TagRequest() { Auth = auth, Tag = new Tag() { Id = id } });
         }
 
-        public async Task<string> AddLink([FromBody] Link link)
+        public async Task<string> AddStream([FromBody] Stream stream)
         {
             HttpContext.Request.Cookies.TryGetValue("uid", out string user);
             HttpContext.Request.Cookies.TryGetValue("token", out string token);
@@ -81,12 +81,12 @@ namespace CentralCoastMusic.Controllers
                 {"uid", user },
                 {"token",token }
             };
-            var linkResponse = await _linkService.AddLink(new LinkRequest() { Auth = auth, Link = link });
+            var response = await _streamService.AddStream(new StreamRequest() { Auth = auth, Stream = stream });
 
-            return linkResponse;
+            return response;
         }
 
-        public async Task RemoveLink(string id)
+        public async Task RemoveStream(string id)
         {
             HttpContext.Request.Cookies.TryGetValue("uid", out string user);
             HttpContext.Request.Cookies.TryGetValue("token", out string token);
@@ -95,7 +95,7 @@ namespace CentralCoastMusic.Controllers
                 {"uid", user },
                 {"token",token }
             };
-            await _linkService.RemoveLink(new LinkRequest() { Auth = auth, Link = new Link() { Id = id } });
+            await _streamService.RemoveStream(new StreamRequest() { Auth = auth, Stream = new Stream() { Id = id } });
 
         }
 

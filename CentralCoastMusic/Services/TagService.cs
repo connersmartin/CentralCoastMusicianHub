@@ -15,29 +15,29 @@ namespace CentralCoastMusic.Services
         {
             _dataService = dataService;
         }
-        public async Task<Dictionary<string,Link>> GetTags(string id)
+        public async Task<Dictionary<string,Tag>> GetTags(string id)
         {
-            var linkResponse = await _dataService.ApiGoogle("GET", null, "Tags/" + id, null);
-            var linkList = JsonSerializer.Deserialize<Dictionary<string,Link>>(linkResponse);
-            return linkList;
+            var response = await _dataService.ApiGoogle("GET", null, "Tags/" + id, null);
+            var tagList = JsonSerializer.Deserialize<Dictionary<string,Tag>>(response);
+            return tagList;
         }
 
-        public async Task<string> AddTag(LinkRequest linkRequest)
+        public async Task<string> AddTag(TagRequest tagRequest)
         {
-            linkRequest.Link.Id = Guid.NewGuid().ToString();
-            var path = "Tags/" + linkRequest.Auth["uid"] + "/" + linkRequest.Link.Id;
-            var json = JsonSerializer.Serialize(linkRequest.Link);
-            var linkResponse = await _dataService.ApiGoogle("PUT", json, path, linkRequest.Auth);
+            tagRequest.Tag.Id = Guid.NewGuid().ToString();
+            var path = "Tags/" + tagRequest.Auth["uid"] + "/" + tagRequest.Tag.Id;
+            var json = JsonSerializer.Serialize(tagRequest.Tag);
+            var response = await _dataService.ApiGoogle("PUT", json, path, tagRequest.Auth);
 
-            var link = JsonSerializer.Deserialize<Link>(linkResponse);
+            var tag = JsonSerializer.Deserialize<Link>(response);
 
-            return link.Id;
+            return tag.Id;
         }
 
-        public async Task RemoveTag(LinkRequest linkRequest)
+        public async Task RemoveTag(TagRequest tagRequest)
         {
-            var path = "Tags/" + linkRequest.Auth["uid"] + "/" + linkRequest.Link.Id;
-            var linkResponse = await _dataService.ApiGoogle("DELETE", null, path, linkRequest.Auth);
+            var path = "Tags/" + tagRequest.Auth["uid"] + "/" + tagRequest.Tag.Id;
+            var response = await _dataService.ApiGoogle("DELETE", null, path, tagRequest.Auth);
 
         }
     }

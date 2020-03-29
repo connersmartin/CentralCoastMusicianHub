@@ -11,64 +11,62 @@
 <div class="row">
     <div class="col-md-4">
         <form id="artistEditor" asp-action="Edit">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group">
-            <label asp-for="Name" class="control-label"></label>
-            <input asp-for="Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="ImageLink" class="control-label"></label>
-            <input asp-for="ImageLink" class="form-control" />
-            <span asp-validation-for="ImageLink" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Youtube" class="control-label"></label>
-            <input asp-for="Youtube" class="form-control" />
-            <span asp-validation-for="Youtube" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Instagram" class="control-label"></label>
-            <input asp-for="Instagram" class="form-control" />
-            <span asp-validation-for="Instagram" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Facebook" class="control-label"></label>
-            <input asp-for="Facebook" class="form-control" />
-            <span asp-validation-for="Facebook" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Patreon" class="control-label"></label>
-            <input asp-for="Patreon" class="form-control" />
-            <span asp-validation-for="Patreon" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Twitter" class="control-label"></label>
-            <input asp-for="Twitter" class="form-control" />
-            <span asp-validation-for="Twitter" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Donation" class="control-label"></label>
-            <input asp-for="Donation" class="form-control" />
-            <span asp-validation-for="Donation" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="CustomUrl" class="control-label"></label>
-            <text asp-for="CustomUrl" class="form-control" />
-        </div>
-        <div class="form-group" id="tagContainer" name="tagContainer">
-            <input class="form-control" id="tags" placeholder="Enter three genres that describe your music" /><span onclick="addTag()">+</span>
-            <div id="tagList" name="tagList"></div>
-        </div>
-        <div class="form-group" id="livestreamContainer" name="livestreamContainer">
-            <div id="livestreamInput">
-                <input class="form-control" id="streamDesc" placeholder="Decribe your stream" maxlength="30" /><input class="form-control" id="streamDate" type="datetime" /><input class="form-control" id="streamLink" placeholder="Link to your livestream" /><span onclick="addLivestream()">+</span>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div id="livestreamList" name ="livestreamList"></div>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary"></button>
-        </div>
+            <div class="form-group">
+                <label asp-for="Youtube" class="control-label"></label>
+                <input asp-for="Youtube" class="form-control" />
+                <span asp-validation-for="Youtube" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Instagram" class="control-label"></label>
+                <input asp-for="Instagram" class="form-control" />
+                <span asp-validation-for="Instagram" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Facebook" class="control-label"></label>
+                <input asp-for="Facebook" class="form-control" />
+                <span asp-validation-for="Facebook" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Patreon" class="control-label"></label>
+                <input asp-for="Patreon" class="form-control" />
+                <span asp-validation-for="Patreon" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Twitter" class="control-label"></label>
+                <input asp-for="Twitter" class="form-control" />
+                <span asp-validation-for="Twitter" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Donation" class="control-label"></label>
+                <input asp-for="Donation" class="form-control" />
+                <span asp-validation-for="Donation" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CustomUrl" class="control-label"></label>
+                <text asp-for="CustomUrl" class="form-control" />
+            </div>
+            <div class="form-group">
+                <div>Will have image uploads here</div>
+            </div>
+            <div class="form-group" id="tagContainer" name="tagContainer">
+                <input class="form-control" id="tags" placeholder="Enter three genres that describe your music" /><span onclick="addTag()">+</span>
+                <div id="tagList" name="tagList"></div>
+            </div>
+            <div class="form-group" id="livestreamContainer" name="livestreamContainer">
+                <div id="livestreamInput">
+                    <input class="form-control" id="streamDesc" placeholder="Decribe your stream" maxlength="30" /><input class="form-control" id="streamDate" type="datetime-local" /><input class="form-control" id="streamLink" placeholder="Link to your livestream" /><span onclick="addLivestream()">+</span>
+                </div>
+                <div id="livestreamList" name="livestreamList"></div>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary"></button>
+            </div>
         </form>
     </div>
 </div>
@@ -80,12 +78,9 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-<script>
-
-   
-        getTags();
-        getStreams();
-   
+<script>   
+    getTags();
+    getStreams();
 
     function getTags() {
         $.ajax({
@@ -100,7 +95,7 @@
     function getStreams() {
         $.ajax({
             type: "GET",
-            url: "../../Link/GetLinks",           
+            url: "../../Link/GetStreams",           
             success: function (data) {
                 $('#livestreamList').html(data);
             }
@@ -110,8 +105,6 @@
     var tagCounter=0
     function addTag() {
         if ($('#tagList').children('input').length < 3) {
-
-
             var tagObj = new Object();
             tagObj.Name = $('#tags').val();
             $.ajax({
@@ -132,13 +125,13 @@
 
     function addLivestream() {
         var streamObj = new Object();
-        streamObj.Name = $('#streamDesc').val();
-        streamObj.Value = $('#streamLink').val();
-        streamObj.Attribute = $('#streamDate').val();
+         streamObj.Name = $('#streamDesc').val();
+            streamObj.Description = $('#streamLink').val();
+            streamObj.StartTime = $('#streamDate').val();
 
         $.ajax({
             type: "POST",
-            url: "../../Link/AddLink",
+            url: "../../Link/AddStream",
             contentType : 'application/json',
             data: JSON.stringify(streamObj),
             success: function (data) {
@@ -165,7 +158,7 @@
     function streamRemove(id) {
         $.ajax({
             type: "POST",
-            url: "../../Link/RemoveLink/"+id,
+            url: "../../Link/RemoveStream/"+id,
             contentType : 'application/json',            
             success: function (data) {
                 $('#'+id).remove();               

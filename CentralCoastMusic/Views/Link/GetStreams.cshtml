@@ -1,0 +1,7 @@
+﻿@model IEnumerable<CentralCoastMusic.Models.Stream>
+
+@foreach (var item in Model)
+{
+    <div id="@item.Id" onclick="streamRemove('@item.Id')"><span>-</span>@item.Name on @item.StartTime viewable at @item.Description</div>
+}
+

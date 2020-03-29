@@ -6,76 +6,113 @@
 
 <h1>Details</h1>
 
-<div>
+<dd>
     <h4>Artist</h4>
     <hr />
-    <dl class="row">        
-        <dt class = "col-sm-2">
+    <dl class="row">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Name)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageLink)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageLink)
-        </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Youtube)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Youtube)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Instagram)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Instagram)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Facebook)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Facebook)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Patreon)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Patreon)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Twitter)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Twitter)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Donation)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Donation)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Livestream)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Livestream)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NextLivestream)
+        <dt class="col-sm-2">
+            Image
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NextLivestream)
+        <dd class="col-sm-10">
+            <div>Will show image here</div>
         </dd>
+        <dt class="col-sm-2">
+            Tags
+        </dt>
+        <dd class="col-sm-10">
+            <div id="tagList" name="tagList"></div>
+        </dd>
+        <dt class="col-sm-2">
+            Live Streams
+        </dt>
+        <dd class="col-sm-10">
+            <div id="livestreamList" name="livestreamList"></div>
+        </dd>
+
+
     </dl>
-</div>
-<div>
-@if (Context.Request.Cookies["uid"] != null)
-{
-    @Html.ActionLink("Edit", "Edit", new {id = Model.Id})
-}
-<a asp-action="Index">Back to List</a>
-</div>
+    </dd>
+    <div>
+        @if (Context.Request.Cookies["uid"] != null)
+        {
+            @Html.ActionLink("Edit", "Edit", new { id = Model.Id })
+        }
+        <a asp-action="Index">Back to List</a>
+    </div>
+
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+        <script>
+            getTags();
+            getStreams();
+
+            function getTags() {
+                $.ajax({
+                    type: "GET",
+                    url: "../../Link/GetTags",
+                    success: function (data) {
+                        $('#tagList').html(data);
+                    }
+                });
+            }
+
+            function getStreams() {
+                $.ajax({
+                    type: "GET",
+                    url: "../../Link/GetStreams",
+                    success: function (data) {
+                        $('#livestreamList').html(data);
+                    }
+                });
+            }
+</script>
+    }
