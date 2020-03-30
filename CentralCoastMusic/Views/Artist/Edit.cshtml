@@ -4,6 +4,9 @@
     ViewData["Title"] = "Edit";
 }
 
+
+<link rel="stylesheet" href="~/css/croppie.css" />
+
 <h1>Edit</h1>
 
 <h4>Artist</h4>
@@ -52,7 +55,12 @@
                 <text asp-for="CustomUrl" class="form-control" />
             </div>
             <div class="form-group">
-                <div>Will have image uploads here</div>
+                <div id="imagePreview">
+                    <input type="file" accept="image/*" onchange="loadFile(event)">
+                    <img id="output" hidden />
+                </div>
+                <div id="imageUpload">Will have image uploads here</div>
+                <div class="btn" onclick="uploadImage()">Upload</div>
             </div>
             <div class="form-group" id="tagContainer" name="tagContainer">
                 <input class="form-control" id="tags" placeholder="Enter three genres that describe your music" /><span onclick="addTag()">+</span>
@@ -65,7 +73,7 @@
                 <div id="livestreamList" name="livestreamList"></div>
             </div>
             <div class="form-group">
-                <button type="submit" class="btn btn-primary"></button>
+                <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </form>
     </div>
@@ -77,96 +85,136 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/croppie.js"></script>
+    <script src="~/js/dropzone.min.js"></script>
 
-<script>   
-    getTags();
-    getStreams();
+    <script>
+        getTags();
+        getStreams();
 
-    function getTags() {
-        $.ajax({
-            type: "GET",
-            url: "../../Link/GetTags",
-            success: function (data) {
-                $('#tagList').html(data);
+        var uploadCrop = $('#imageUpload').croppie({
+            viewport: {
+                width: 200,
+                height: 200,
+                type: 'square'
+            },
+            boundary: {
+                width: 300,
+                height: 300
             }
-        });
-    }
+        });        
 
-    function getStreams() {
-        $.ajax({
-            type: "GET",
-            url: "../../Link/GetStreams",           
-            success: function (data) {
-                $('#livestreamList').html(data);
+        var loadFile = function (event) {
+            var output = document.getElementById('output');
+            output.src = URL.createObjectURL(event.target.files[0]);
+            output.onload = function () {
+                 uploadCrop.croppie('bind', {
+                     url: output.src
+                });
+                URL.revokeObjectURL(output.src) // free memory
             }
-        });
-    }
+        };
 
-    var tagCounter=0
-    function addTag() {
-        if ($('#tagList').children('input').length < 3) {
-            var tagObj = new Object();
-            tagObj.Name = $('#tags').val();
+        function uploadImage() {
+            uploadCrop.croppie('result','blob').then(function(blob) {
+                var formData = new FormData();
+                formData.append('filename', 'profile.png');
+                formData.append('blob', blob);
+                var MyAppUrlSettings = {
+                    MyUsefulUrl: '@Url.Action("UploadImage","Image")'
+                }
+
+                var request = new XMLHttpRequest();
+                request.open('POST', MyAppUrlSettings.MyUsefulUrl);
+                request.send(formData);
+            });
+        }
+
+        function getTags() {
             $.ajax({
-                type: "POST",
-                url: "../../Link/AddTag",
-                contentType: 'application/json',
-                data: JSON.stringify(tagObj),
+                type: "GET",
+                url: "../../Link/GetTags",
                 success: function (data) {
-                    var dataStr = "'" + data + "'";
-                    $('#tagList').append('<input id="' + data + '" value="' + $('#tags').val() + '" onclick="tagRemove(' + dataStr + ')"/>'); $('#tags').val('');
+                    $('#tagList').html(data);
                 }
             });
-        } else {
-            $('#tags').val('');
-            $('#tags').attr('placeholder','Please remove a tag to add a new one');
         }
-    }
 
-    function addLivestream() {
-        var streamObj = new Object();
-         streamObj.Name = $('#streamDesc').val();
+        function getStreams() {
+            $.ajax({
+                type: "GET",
+                url: "../../Link/GetStreams",
+                success: function (data) {
+                    $('#livestreamList').html(data);
+                }
+            });
+        }
+
+        var tagCounter = 0
+        function addTag() {
+            if ($('#tagList').children('input').length < 3) {
+                var tagObj = new Object();
+                tagObj.Name = $('#tags').val();
+                $.ajax({
+                    type: "POST",
+                    url: "../../Link/AddTag",
+                    contentType: 'application/json',
+                    data: JSON.stringify(tagObj),
+                    success: function (data) {
+                        var dataStr = "'" + data + "'";
+                        $('#tagList').append('<input id="' + data + '" value="' + $('#tags').val() + '" onclick="tagRemove(' + dataStr + ')"/>'); $('#tags').val('');
+                    }
+                });
+            } else {
+                $('#tags').val('');
+                $('#tags').attr('placeholder', 'Please remove a tag to add a new one');
+            }
+        }
+
+        function addLivestream() {
+            var streamObj = new Object();
+            streamObj.Name = $('#streamDesc').val();
             streamObj.Description = $('#streamLink').val();
             streamObj.StartTime = $('#streamDate').val();
 
-        $.ajax({
-            type: "POST",
-            url: "../../Link/AddStream",
-            contentType : 'application/json',
-            data: JSON.stringify(streamObj),
-            success: function (data) {
-                var dataStr = "'" + data + "'";
-                $('#livestreamList').append('<div id="'+data+'" onclick="streamRemove('+dataStr+')"><span>-</span>' + $('#streamDesc').val() + ' on ' + $('#streamDate').val() + ' viewable at ' + $('#streamLink').val() + '</div>');
-                $('#livestreamInput').find('input').val('');
-            }
-        });
-    }
+            $.ajax({
+                type: "POST",
+                url: "../../Link/AddStream",
+                contentType: 'application/json',
+                data: JSON.stringify(streamObj),
+                success: function (data) {
+                    var dataStr = "'" + data + "'";
+                    $('#livestreamList').append('<div id="' + data + '" onclick="streamRemove(' + dataStr + ')"><span>-</span>' + $('#streamDesc').val() + ' on ' + $('#streamDate').val() + ' viewable at ' + $('#streamLink').val() + '</div>');
+                    $('#livestreamInput').find('input').val('');
+                }
+            });
+        }
 
-    function tagRemove(id) {
-        $.ajax({
-            type: "POST",
-            url: "../../Link/RemoveTag/"+id,
-            contentType : 'application/json',            
-            success: function (data) {
-                $('#' + id).remove();  
-                            $('#tags').attr('placeholder','Enter three genres that describe your music');
+        function tagRemove(id) {
+            $.ajax({
+                type: "POST",
+                url: "../../Link/RemoveTag/" + id,
+                contentType: 'application/json',
+                success: function (data) {
+                    $('#' + id).remove();
+                    $('#tags').attr('placeholder', 'Enter three genres that describe your music');
 
-            }
-        });
-    }
+                }
+            });
+        }
 
-    function streamRemove(id) {
-        $.ajax({
-            type: "POST",
-            url: "../../Link/RemoveStream/"+id,
-            contentType : 'application/json',            
-            success: function (data) {
-                $('#'+id).remove();               
-            }
-        });
-    }
+        function streamRemove(id) {
+            $.ajax({
+                type: "POST",
+                url: "../../Link/RemoveStream/" + id,
+                contentType: 'application/json',
+                success: function (data) {
+                    $('#' + id).remove();
+                }
+            });
+        }
 
 
 
-</script>
+    </script>
 }

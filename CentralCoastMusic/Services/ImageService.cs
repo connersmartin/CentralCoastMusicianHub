@@ -1,4 +1,6 @@
-﻿using Google.Cloud.Storage.V1;
+﻿using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Storage.V1;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,23 +11,37 @@ namespace CentralCoastMusic.Services
 {
     public class ImageService
     {
+        private string jsonCred = AppSettings.AppSetting["authJsonCred"];
+        private string bucketName = AppSettings.AppSetting["googleStorageBucket"];
         //https://cloud.google.com/storage/docs/uploading-objects#storage-upload-object-csharp
-        private void UploadFile(string bucketName, string localPath, string objectName = null)
+        internal void UploadFile(IFormFile file)
         {
-            var storage = StorageClient.Create();
-            using (var f = File.OpenRead(localPath))
+            string objectName = file.FileName;
+
+            var storage = StorageClient.Create(GoogleCredential.FromJson(jsonCred), null);
+            using (var f = file.OpenReadStream())
             {
-                objectName = objectName ?? Path.GetFileName(localPath);
-                storage.UploadObject(bucketName, objectName, null, f);
-                Console.WriteLine($"Uploaded {objectName}.");
+                storage.UploadObject(bucketName, "ProfileImage/"+objectName, file.ContentType, f);                
             }
+
         }
 
         //https://cloud.google.com/storage/docs/downloading-objects
-        private void DownloadObject(string bucketName, string objectName, string localPath = null)
+        internal void GetImage(string bucketName, string objectName, string localPath = null)
         {
-            var storage = StorageClient.Create();
-            localPath = localPath ?? Path.GetFileName(objectName);
+            var storage = StorageClient.Create(GoogleCredential.FromJson(jsonCred), null);
+            //need to research this
+            using (var outputFile = File.OpenWrite(localPath))
+            {
+                storage.DownloadObject(bucketName, objectName, outputFile);
+            }
+            Console.WriteLine($"downloaded {objectName} to {localPath}.");
+        }
+
+        internal void RemoveImage(string bucketName, string objectName, string localPath = null)
+        {
+            var storage = StorageClient.Create(GoogleCredential.FromJson(jsonCred), null);
+            //need to research this
             using (var outputFile = File.OpenWrite(localPath))
             {
                 storage.DownloadObject(bucketName, objectName, outputFile);

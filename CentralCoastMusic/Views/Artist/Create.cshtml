@@ -4,6 +4,8 @@
     ViewData["Title"] = "Create";
 }
 
+<link rel="stylesheet" href="~/css/croppie.css" />
+
 <h1>Create</h1>
 
 <h4>Artist</h4>
@@ -48,7 +50,12 @@
                 <span asp-validation-for="Donation" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <div>Will have image uploads here</div>
+                <div id="imagePreview">
+                    <input type="file" accept="image/*" onchange="loadFile(event)">
+                    <img id="output" hidden />
+                </div>
+                <div id="imageUpload">Will have image uploads here</div>
+                <div class="btn" onclick="uploadImage()">Upload</div>
             </div>
             <div class="form-group" id="tagContainer" name="tagContainer">
                 <input class="form-control" id="tags" placeholder="Enter three genres that describe your music" /><span onclick="addTag()">+</span>
@@ -73,7 +80,49 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script>     
+    <script src="~/js/croppie.js"></script>
+    <script src="~/js/dropzone.min.js"></script>
+
+
+    <script>
+        var uploadCrop = $('#imageUpload').croppie({
+            viewport: {
+                width: 200,
+                height: 200,
+                type: 'square'
+            },
+            boundary: {
+                width: 300,
+                height: 300
+            }
+        });        
+
+        var loadFile = function (event) {
+            var output = document.getElementById('output');
+            output.src = URL.createObjectURL(event.target.files[0]);
+            output.onload = function () {
+                 uploadCrop.croppie('bind', {
+                     url: output.src
+                });
+                URL.revokeObjectURL(output.src) // free memory
+            }
+        };
+
+        function uploadImage() {
+            uploadCrop.croppie('result','blob').then(function(blob) {
+                var formData = new FormData();
+                formData.append('filename', 'profile.png');
+                formData.append('blob', blob);
+                var MyAppUrlSettings = {
+                    MyUsefulUrl: '@Url.Action("UploadImage","Image")'
+                }
+
+                var request = new XMLHttpRequest();
+                request.open('POST', MyAppUrlSettings.MyUsefulUrl);
+                request.send(formData);
+            });
+        }
+
 
         var tagCounter = 0
         function addTag() {
