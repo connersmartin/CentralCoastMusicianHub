@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CentralCoastMusic.Models;
 using CentralCoastMusic.Services;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
@@ -13,9 +14,13 @@ namespace CentralCoastMusic.Controllers
     public class ImageController : Controller
     {
         private readonly ImageService _imageService;
-        public ImageController(ImageService imageService)
+        private readonly ArtistService _artistService;
+        private readonly StreamService _streamService;
+        public ImageController(ImageService imageService, ArtistService artistService,StreamService streamService)
         {
             _imageService = imageService;
+            _artistService = artistService;
+            _streamService = streamService;
         }
 
         public IActionResult Index()
@@ -24,39 +29,75 @@ namespace CentralCoastMusic.Controllers
         }
 
         [HttpPost]
-        public ActionResult UploadImage(string type)
+        public async Task<ActionResult> UploadImage(string type)
         {
-            var file = Request.Form.Files.FirstOrDefault();
-            
-            //Give file a GUID as a name
-            //upload that guid to the user's profile
+            HttpContext.Request.Cookies.TryGetValue("uid", out string user);
+            HttpContext.Request.Cookies.TryGetValue("token", out string token);
+            var auth = new Dictionary<string, string>()
+            {
+                {"uid", user },
+                {"token",token }
+            };
 
-            _imageService.UploadFile(file);
+            var file = Request.Form.Files.FirstOrDefault();
+
+            //Give file a GUID as a name
+            var id = Guid.NewGuid().ToString();
+            //upload that guid to the user's profile
+            var artist = await _artistService.GetArtist(user);
+            artist.ImageId = id;
+            await _artistService.EditArtist(new ArtistRequest() { Auth = auth, Artist =artist});
+            
+            _imageService.UploadFile(file,id);
 
             return Ok();
         }
 
         [HttpGet]
-        public ActionResult GetImage(string id)
-        {            
+        public async Task<string> GetImage(string id, string type)
+        {
+            var imageId = "";
+            switch(type)
+            {
+                case "ProfileImage":
+                    var artistResponse = await _artistService.GetArtist(id);
+                    imageId = artistResponse.ImageId;
+                    break;
+
+            }
+            //need to figure out stream images
+
             //Get file guid from profile id
             //Return that image
-
-            //_imageService.GetImage();
-
-            return Ok();
+            return _imageService.GetImage(type + "/" + imageId);
         }
 
         [HttpDelete]
-        public ActionResult RemoveImage(string id)
+        public async Task<ActionResult> RemoveImage(string type)
         {
             //Get file guid from profile id
             //Remove that image
-            //Remove that id
+            //Remove that id         
 
-            //_imageService.DeleteImage();
+
+            HttpContext.Request.Cookies.TryGetValue("uid", out string user);
+            HttpContext.Request.Cookies.TryGetValue("token", out string token);
+            var auth = new Dictionary<string, string>()
+            {
+                {"uid", user },
+                {"token",token }
+            };
+            var artistResponse = await _artistService.GetArtist(user);
+            var imageId = artistResponse.ImageId;
+
+            //upload that guid to the user's profile
+            await _artistService.EditArtist(new ArtistRequest() { Auth = auth, Artist = new Artist() { ImageId = null } });
+
+            _imageService.RemoveImage(type+"/"+imageId);
+
 
             return Ok();
+
         }
     }
 }

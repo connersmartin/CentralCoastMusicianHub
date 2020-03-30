@@ -13,10 +13,11 @@ namespace CentralCoastMusic.Services
     {
         private string jsonCred = AppSettings.AppSetting["authJsonCred"];
         private string bucketName = AppSettings.AppSetting["googleStorageBucket"];
+        private string imageUrl = AppSettings.AppSetting["imageBaseUrl"];
+
         //https://cloud.google.com/storage/docs/uploading-objects#storage-upload-object-csharp
-        internal void UploadFile(IFormFile file)
+        internal void UploadFile(IFormFile file,string objectName)
         {
-            string objectName = file.FileName;
 
             var storage = StorageClient.Create(GoogleCredential.FromJson(jsonCred), null);
             using (var f = file.OpenReadStream())
@@ -27,26 +28,16 @@ namespace CentralCoastMusic.Services
         }
 
         //https://cloud.google.com/storage/docs/downloading-objects
-        internal void GetImage(string bucketName, string objectName, string localPath = null)
+        internal string GetImage(string objectName)
         {
-            var storage = StorageClient.Create(GoogleCredential.FromJson(jsonCred), null);
-            //need to research this
-            using (var outputFile = File.OpenWrite(localPath))
-            {
-                storage.DownloadObject(bucketName, objectName, outputFile);
-            }
-            Console.WriteLine($"downloaded {objectName} to {localPath}.");
+            return imageUrl + objectName;
         }
 
-        internal void RemoveImage(string bucketName, string objectName, string localPath = null)
+        internal void RemoveImage(string objectName)
         {
-            var storage = StorageClient.Create(GoogleCredential.FromJson(jsonCred), null);
-            //need to research this
-            using (var outputFile = File.OpenWrite(localPath))
-            {
-                storage.DownloadObject(bucketName, objectName, outputFile);
-            }
-            Console.WriteLine($"downloaded {objectName} to {localPath}.");
+            var storage = StorageClient.Create(GoogleCredential.FromJson(jsonCred), null);          
+            storage.DeleteObject(bucketName, objectName);
+            Console.WriteLine($"Deleted {objectName}.");
         }
     }
 }

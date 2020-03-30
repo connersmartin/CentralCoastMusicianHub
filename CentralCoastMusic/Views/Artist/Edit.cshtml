@@ -54,6 +54,7 @@
                 <label asp-for="CustomUrl" class="control-label"></label>
                 <text asp-for="CustomUrl" class="form-control" />
             </div>
+            @Html.HiddenFor(m=>m.ImageId, new { id="imageId"})
             <div class="form-group">
                 <div id="imagePreview">
                     <input type="file" accept="image/*" onchange="loadFile(event)">
@@ -129,6 +130,25 @@
                 request.send(formData);
             });
         }
+
+        //Need to do this better
+        //function uploadImage() {
+        //    uploadCrop.croppie('result','blob').then(function(blob) {
+        //        var formData = new FormData();
+        //        formData.append('filename', 'profile.png');
+        //        formData.append('blob', blob);
+                
+        //        $.ajax({
+        //            type: "POST",
+        //            url: "../../Image/UploadImage",
+        //            contentType: 'application/json',
+        //            data: JSON.stringify(formData),
+        //            success: function (data) {
+        //                $('#imageId').val(data);
+        //            }
+        //        });
+        //    });
+        //}
 
         function getTags() {
             $.ajax({

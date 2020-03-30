@@ -13,5 +13,6 @@ namespace CentralCoastMusic.Models
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public string RecurringType { get; set; }
+        public string ImageId { get; set; }
     }
 }
