@@ -27,6 +27,8 @@
         </div>
         <span id="reallyLog">Or log in</span>
     </div>
+
+    <div class="btn btn-toolbar" id="loginFb">Facebook login?</div>
 </div>
 
 
@@ -34,7 +36,9 @@
 
         <script>
         //Firebase configuration
-       var firebaseConfig = @Html.Raw(ViewData["jsSettings"]);
+            var firebaseConfig = @Html.Raw(ViewData["jsSettings"]);
+
+            var provider = new firebase.auth.FacebookAuthProvider();
         // Initialize Firebase only once
         if (firebase.apps.length === 0) {
             firebase.initializeApp(firebaseConfig);
@@ -42,13 +46,40 @@
         //if already logged in go to dashboard
         if (firebase.auth().currentUser !== null) {
             loginAPI();
-        }
+            }
+
+            $("#loginFb").click(function () {
+                firebase.auth().signInWithPopup(provider).then(function (result) {
+                    // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+                    var fbtoken = result.credential.accessToken;
+                    // The signed-in user info.
+                    var fbuser = result.user;
+
+                    var emailToken = firebase.auth().currentUser.xa;
+                    var emailUser = firebase.auth().currentUser.uid;
+                    loginAPI(emailUser, emailToken);
+                    // ...
+                }).catch(function (error) {
+                    // Handle Errors here.
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    // The email of the user's account used.
+                    var email = error.email;
+                    // The firebase.auth.AuthCredential type that was used.
+                    var credential = error.credential;
+                    // ...
+                });
+            });
+
+
 
         $("#create").click(function () {
             var log = $("#logCreate").val().trim();
             var pas = $("#passCreate").val().trim();
             firebase.auth().createUserWithEmailAndPassword(log, pas).then(function () {
-                loginAPI(true);
+                var emailToken = firebase.auth().currentUser.xa;
+                var emailUser = firebase.auth().currentUser.uid;
+                loginAPI(emailUser,emailToken);
             },
                 function (error) {
                     var errorCode = error.code;
@@ -71,7 +102,9 @@
             var log = $("#logIn").val().trim();
             var pas = $("#passIn").val().trim();
             firebase.auth().signInWithEmailAndPassword(log, pas).then(function (result) {
-                loginAPI(false);
+                 var emailToken = firebase.auth().currentUser.xa;
+                var emailUser = firebase.auth().currentUser.uid;
+                loginAPI(emailUser,emailToken);
             }).catch(function (error) {
                 var errorCode = error.code;
                 var errorMessage = error.message;
@@ -79,16 +112,16 @@
             });
         });
 
-        function loginAPI(newAdmin) {
+        function loginAPI(user,token) {
             $.ajax({
                 url: "/Artist/SetAuth",
                 type: 'POST',
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("Accept", "application/json");
                     xhr.setRequestHeader("Content-Type", "application/json");
-                    xhr.setRequestHeader("Authorization", "Bearer " + firebase.auth().currentUser.xa);
-                    xhr.setRequestHeader("Uid", firebase.auth().currentUser.uid);
-                    xhr.setRequestHeader("Token", firebase.auth().currentUser.xa);
+                    xhr.setRequestHeader("Authorization", "Bearer " + token);
+                    xhr.setRequestHeader("Uid", user);
+                    xhr.setRequestHeader("Token", token);
                 },
                 error: function (ex) {
                     alert("error? " + ex.status + " - " + ex.statusText);

@@ -180,7 +180,7 @@ namespace CentralCoastMusic.Controllers
                     Set("token", b, 720);
                     Set("uid", a, 720);
                 }
-                return true;
+                    return true;
             }
             else
             {
