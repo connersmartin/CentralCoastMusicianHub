@@ -8,6 +8,9 @@
 
 <dd>
     <h4>Artist</h4>
+
+    <img src="@Model.ImageUrl" />
+
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -62,7 +65,7 @@
             Image
         </dt>
         <dd class="col-sm-10">
-            <div>Will show image here</div>
+            <div id="imagePreview">Will show image here</div>
         </dd>
         <dt class="col-sm-2">
             Tags
@@ -79,7 +82,7 @@
 
 
     </dl>
-    </dd>
+</dd>
     <div>
         @if (Context.Request.Cookies["uid"] != null)
         {

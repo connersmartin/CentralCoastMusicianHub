@@ -16,19 +16,23 @@ namespace CentralCoastMusic.Controllers
         private readonly ArtistService _artistService;
         private readonly AuthService _authService;
         private readonly TagService _tagService;
-        private readonly StreamService _linkService;
+        private readonly StreamService _streamService;
+        private readonly ImageService _imageService;
+
 
         public ArtistController(ILogger<ArtistController> logger,
                                 ArtistService artistService,
                                 AuthService authService,
                                 TagService tagService,
-                                StreamService linkService)
+                                StreamService streamService,
+                                ImageService imageService)
         {
             _logger = logger;
             _artistService = artistService;
             _authService = authService;
             _tagService = tagService;
-            _linkService = linkService;
+            _streamService = streamService;
+            _imageService = imageService;
         }
 
         public ActionResult Index()
@@ -105,13 +109,26 @@ namespace CentralCoastMusic.Controllers
         public async Task<ActionResult> Edit(Artist artist)
         {
             var auth = GetCookies();
+            string imageUrl = null;
             try
             {
+                var imageId = await _imageService.GetProfileImage(artist.Id);
+
+                if (imageId!="")
+                {
+                    imageUrl = _imageService.GetImage("ProfileImage/" + imageId);
+                }
+
+                artist.ImageUrl = imageUrl;
+
                 var artistRequest = new ArtistRequest()
                 {
                     Auth = auth,
                     Artist = artist
                 };
+
+
+
                 await _artistService.EditArtist(artistRequest);
                 
                 return RedirectToAction("Details");

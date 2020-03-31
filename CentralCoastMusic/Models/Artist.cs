@@ -9,7 +9,7 @@ namespace CentralCoastMusic.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public string ImageId { get; set; }
+        public string ImageUrl { get; set; }
         public string Youtube { get; set; }
         public string Instagram { get; set; }
         public string Facebook { get; set; }

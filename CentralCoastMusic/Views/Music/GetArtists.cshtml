@@ -7,7 +7,7 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ImageId)
+                
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Livestream)
@@ -27,7 +27,7 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ImageId)
+                <img src="@item.ImageUrl" />
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Livestream)

@@ -54,9 +54,9 @@
                 <label asp-for="CustomUrl" class="control-label"></label>
                 <text asp-for="CustomUrl" class="form-control" />
             </div>
-            @Html.HiddenFor(m=>m.ImageId, new { id="imageId"})
             <div class="form-group">
                 <div id="imagePreview">
+                    <img id="profileImage" src="@Model.ImageUrl" /><div class="btn btn-danger" id="deleteImage">Remove Image</div>
                     <input type="file" accept="image/*" onchange="loadFile(event)">
                     <img id="output" hidden />
                 </div>
@@ -132,23 +132,9 @@
         }
 
         //Need to do this better
-        //function uploadImage() {
-        //    uploadCrop.croppie('result','blob').then(function(blob) {
-        //        var formData = new FormData();
-        //        formData.append('filename', 'profile.png');
-        //        formData.append('blob', blob);
-                
-        //        $.ajax({
-        //            type: "POST",
-        //            url: "../../Image/UploadImage",
-        //            contentType: 'application/json',
-        //            data: JSON.stringify(formData),
-        //            success: function (data) {
-        //                $('#imageId').val(data);
-        //            }
-        //        });
-        //    });
-        //}
+        
+
+     
 
         function getTags() {
             $.ajax({
@@ -234,6 +220,15 @@
             });
         }
 
+        $('#deleteImage').click(function () {
+            $.ajax({
+                type: "DELETE",
+                url: "../../Image/RemoveImage?type=ProfileImage",
+                success: function (data) {
+                    $('#profileImage').removeAttr('src');
+                }
+            });
+        });
 
 
     </script>

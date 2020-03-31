@@ -43,12 +43,10 @@ namespace CentralCoastMusic.Controllers
 
             //Give file a GUID as a name
             var id = Guid.NewGuid().ToString();
-            //upload that guid to the user's profile
-            var artist = await _artistService.GetArtist(user);
-            artist.ImageId = id;
-            await _artistService.EditArtist(new ArtistRequest() { Auth = auth, Artist =artist});
-            
+            //upload that file                                   
             _imageService.UploadFile(file,id);
+            //get that profileimage linked to user
+            await _imageService.AddProfileImage(auth, id);
 
             return Ok();
         }
@@ -60,8 +58,7 @@ namespace CentralCoastMusic.Controllers
             switch(type)
             {
                 case "ProfileImage":
-                    var artistResponse = await _artistService.GetArtist(id);
-                    imageId = artistResponse.ImageId;
+                    imageId = await _imageService.GetProfileImage(id);                    
                     break;
 
             }
@@ -87,13 +84,11 @@ namespace CentralCoastMusic.Controllers
                 {"uid", user },
                 {"token",token }
             };
-            var artistResponse = await _artistService.GetArtist(user);
-            var imageId = artistResponse.ImageId;
 
-            //upload that guid to the user's profile
-            await _artistService.EditArtist(new ArtistRequest() { Auth = auth, Artist = new Artist() { ImageId = null } });
+            var imageId = await _imageService.GetProfileImage(user);
 
             _imageService.RemoveImage(type+"/"+imageId);
+            await _imageService.RemoveProfileImage(auth, user);
 
 
             return Ok();

@@ -2,14 +2,10 @@
 
 <div>
     <h4>Artist - @Html.DisplayFor(model => model.Name)</h4>
+    <img src="@Model.ImageUrl" />
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageId)
-        </dd>
+        
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Youtube)
         </dt>

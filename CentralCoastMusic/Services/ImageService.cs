@@ -5,12 +5,21 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace CentralCoastMusic.Services
 {
     public class ImageService
     {
+        private readonly DataService _dataService;
+
+        public ImageService(DataService dataService)
+        {
+            _dataService = dataService;
+        }
+
+
         private string jsonCred = AppSettings.AppSetting["authJsonCred"];
         private string bucketName = AppSettings.AppSetting["googleStorageBucket"];
         private string imageUrl = AppSettings.AppSetting["imageBaseUrl"];
@@ -38,6 +47,29 @@ namespace CentralCoastMusic.Services
             var storage = StorageClient.Create(GoogleCredential.FromJson(jsonCred), null);          
             storage.DeleteObject(bucketName, objectName);
             Console.WriteLine($"Deleted {objectName}.");
+        }
+
+        internal async Task AddProfileImage(Dictionary<string,string> auth, string id)
+        {
+            var json = JsonSerializer.Serialize(new Dictionary<string, string>() { { "Id", id } });
+            var sub = "ProfileImage/" + auth["uid"];   
+            var response = await _dataService.ApiGoogle("PUT", json, sub, auth);
+        }
+
+        internal async Task<string> GetProfileImage(string id)
+        {            
+            var sub = "ProfileImage/" + id;
+            var response = await _dataService.ApiGoogle("GET", null, sub, null);
+
+            var imageId = JsonSerializer.Deserialize<Dictionary<string, string>>(response);
+
+            return imageId==null? "": imageId.FirstOrDefault().Value;
+        }
+
+        internal async Task RemoveProfileImage(Dictionary<string, string> auth, string id)
+        {
+            var sub = "ProfileImage/" + auth["uid"];
+            var response = await _dataService.ApiGoogle("DELETE", null, sub, auth);
         }
     }
 }
