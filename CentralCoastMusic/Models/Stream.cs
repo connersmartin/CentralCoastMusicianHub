@@ -10,9 +10,10 @@ namespace CentralCoastMusic.Models
         public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public DateTime? StartTime { get; set; }
-        public DateTime? EndTime { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
         public string RecurringType { get; set; }
         public string ImageId { get; set; }
+        public string Calendar { get; set; }         
     }
 }

@@ -14,12 +14,15 @@ namespace CentralCoastMusic.Controllers
     {
         private readonly ILogger<MusicController> _logger;
         private readonly ArtistService _artistService;
+        private readonly StreamService _streamService;
 
         public MusicController(ILogger<MusicController> logger,
-                                ArtistService artistService)
+                                ArtistService artistService,
+                                StreamService streamService)
         {
             _logger = logger;
             _artistService = artistService;
+            _streamService = streamService;
         }
 
         //Gets all artists
@@ -32,11 +35,14 @@ namespace CentralCoastMusic.Controllers
         {
             var artists = await _artistService.GetArtists();
 
+            artists = await _streamService.AddUpcomingStreamToArtists(artists);
+            
             return PartialView(artists);
         }
         public async Task<IActionResult> Search(string id)
         {
             var artists = await _artistService.SearchArtists(id);
+            artists = await _streamService.AddUpcomingStreamToArtists(artists);
             return PartialView("GetArtists", artists);
         }
 
@@ -46,7 +52,9 @@ namespace CentralCoastMusic.Controllers
             var artist = await _artistService.GetArtist(id);
             if (artist != null)
             {
-                return PartialView(artist);
+                var artists = await _streamService.AddUpcomingStreamToArtists(new List<Artist>() { artist});
+
+                return PartialView(artists.FirstOrDefault());
             }
             else
             {

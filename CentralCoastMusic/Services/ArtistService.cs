@@ -38,7 +38,9 @@ namespace CentralCoastMusic.Services
             var artistResponse = await _dataService.ApiGoogle("GET", null, "Artists", null);
             var artists = _helper.Mapper<Dictionary<string, Artist>>(artistResponse);
 
-            return artists.Select(a => a.Value).ToList();
+            var artistList = artists.Select(a => a.Value).ToList();            
+
+            return artistList;
 
             //return MockService.LoadJson();
         }

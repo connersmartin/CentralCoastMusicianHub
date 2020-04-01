@@ -40,5 +40,26 @@ namespace CentralCoastMusic.Services
             var response = await _dataService.ApiGoogle("DELETE", null, path, streamRequest.Auth);
 
         }
+
+        public async Task<List<Artist>> AddUpcomingStreamToArtists(List<Artist> artists)
+        {
+            foreach (var artist in artists)
+            {
+                var streams = await GetStreams(artist.Id);
+                if (streams != null)
+                {
+                    var streamList = streams.Select(l => l.Value).ToList();
+                    var nextLivestream = streamList.OrderBy(s => s.StartTime).Where(s => s.EndTime > DateTime.Now).FirstOrDefault();
+                    if (nextLivestream != null)
+                    {
+                        artist.Livestream = nextLivestream.Description;
+                        artist.NextLivestream = nextLivestream.StartTime;
+
+                    }
+
+                }
+            }
+            return artists;
+        }
     }
 }

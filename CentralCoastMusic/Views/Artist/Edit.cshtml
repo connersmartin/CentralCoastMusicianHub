@@ -69,7 +69,7 @@
             </div>
             <div class="form-group" id="livestreamContainer" name="livestreamContainer">
                 <div id="livestreamInput">
-                    <input class="form-control" id="streamDesc" placeholder="Decribe your stream" maxlength="30" /><input class="form-control" id="streamDate" type="datetime-local" /><input class="form-control" id="streamLink" placeholder="Link to your livestream" /><span onclick="addLivestream()">+</span>
+                    <input class="form-control" id="streamDesc" placeholder="Decribe your stream" maxlength="30" /><input class="form-control" id="streamDate" type="datetime-local" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" step="300" /><input class="form-control" id="streamEndDate" type="datetime-local" step="300" value="@DateTime.Now.AddHours(1).ToString("yyyy-MM-ddTHH:mm")" /><input class="form-control" id="streamLink" placeholder="Link to your livestream" /><span onclick="addLivestream()">+</span>
                 </div>
                 <div id="livestreamList" name="livestreamList"></div>
             </div>
@@ -182,7 +182,7 @@
             streamObj.Name = $('#streamDesc').val();
             streamObj.Description = $('#streamLink').val();
             streamObj.StartTime = $('#streamDate').val();
-
+            streamObj.EndTime = $('#streamEndDate').val();
             $.ajax({
                 type: "POST",
                 url: "../../Link/AddStream",
@@ -191,7 +191,7 @@
                 success: function (data) {
                     var dataStr = "'" + data + "'";
                     $('#livestreamList').append('<div id="' + data + '" onclick="streamRemove(' + dataStr + ')"><span>-</span>' + $('#streamDesc').val() + ' on ' + $('#streamDate').val() + ' viewable at ' + $('#streamLink').val() + '</div>');
-                    $('#livestreamInput').find('input').val('');
+                    $('#livestreamInput').find('input').val('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")');
                 }
             });
         }

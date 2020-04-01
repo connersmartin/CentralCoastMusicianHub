@@ -12,11 +12,13 @@ namespace CentralCoastMusic.Controllers
     {
         private readonly TagService _tagService;
         private readonly StreamService _streamService;
+        private readonly ArtistService _artistService;
 
-        public LinkController(TagService tagService,StreamService streamService)
+        public LinkController(TagService tagService,StreamService streamService,ArtistService artistService)
         {
             _tagService = tagService;
             _streamService = streamService;
+            _artistService = artistService;
         }
         public async Task<IActionResult> GetStreams()
         {
@@ -81,6 +83,8 @@ namespace CentralCoastMusic.Controllers
                 {"uid", user },
                 {"token",token }
             };
+            var artist = await _artistService.GetArtist(user);
+            stream.Calendar = PopulateCalendar(artist, stream);
             var response = await _streamService.AddStream(new StreamRequest() { Auth = auth, Stream = stream });
 
             return response;
@@ -97,6 +101,33 @@ namespace CentralCoastMusic.Controllers
             };
             await _streamService.RemoveStream(new StreamRequest() { Auth = auth, Stream = new Stream() { Id = id } });
 
+        }
+
+        public string PopulateCalendar(Artist artist, Stream stream)
+        {
+            var calendar = @"BEGIN:VCALENDAR
+PRODID:-//Google Inc//Google Calendar 70.9054//EN
+
+VERSION:2.0
+CALSCALE:GREGORIAN
+METHOD:REQUEST
+BEGIN:VEVENT
+DTSTART:{3}
+DTEND:{4}
+ORGANIZER;CN=""{0}"":mailto:test@test.com
+DESCRIPTION:{1}:{2}
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:{0} live at {2}
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR";
+            var startTime = stream.StartTime.ToString("yyyyMMddTHHmmss");
+            var endTime = stream.EndTime.ToString("yyyyMMddTHHmmss");
+
+            var result = string.Format(calendar, artist.Name, stream.Name, stream.Description, startTime, endTime).Replace("\r\n","\\n");
+
+            return result;
         }
 
     }
