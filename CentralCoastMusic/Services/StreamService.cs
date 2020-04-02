@@ -22,6 +22,23 @@ namespace CentralCoastMusic.Services
             return streamList;
         }
 
+        public async Task<Stream> GetSingleStream(string id)
+        {
+            var singleStream = new Stream();
+            var response = await _dataService.ApiGoogle("GET", null, "Links", null);
+            var streamList = JsonSerializer.Deserialize<Dictionary<string,Dictionary<string, Stream>>>(response);
+            var streams = streamList.Select(l => l.Value);
+            foreach (var s in streams)
+            {
+                if (s.ContainsKey(id))
+                {
+                    singleStream = s[id];
+                }
+            }
+
+            return singleStream;
+        }
+
         public async Task<string> AddStream(StreamRequest streamRequest)
         {
             streamRequest.Stream.Id = Guid.NewGuid().ToString();
@@ -54,7 +71,7 @@ namespace CentralCoastMusic.Services
                     {
                         artist.Livestream = nextLivestream.Description;
                         artist.NextLivestream = nextLivestream.StartTime;
-
+                        artist.LiveStreamId = nextLivestream.Id;
                     }
 
                 }

@@ -39,6 +39,9 @@
                 @Html.DisplayFor(modelItem => item.Verified)
             </td>
             <td>
+                <a href="#" onclick="addToCalendar('@item.LiveStreamId')">Add to calendar</a>
+            </td>
+            <td>
                 <a href="#" onclick="getDetail('@item.Id')">See Detail</a>
             </td>
         </tr>

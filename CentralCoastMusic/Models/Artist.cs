@@ -18,6 +18,7 @@ namespace CentralCoastMusic.Models
         public string Donation { get; set; }
         public string Livestream { get; set; }
         public DateTime? NextLivestream { get; set; }
+        public string LiveStreamId { get; set; }
         public bool Verified { get; set; }
         public string CustomUrl { get; set; }
 

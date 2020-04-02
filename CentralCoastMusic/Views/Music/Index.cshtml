@@ -48,6 +48,21 @@
             });
         }
 
+        function addToCalendar(id) {
+            $.ajax({
+                url: '/Link/GetStreamAttachment/' + id,
+                success: function (data) {
+                    var element = document.createElement('a');
+                    element.setAttribute('href', 'data:text/calendar;charset=utf-8,' + encodeURIComponent(data));
+                    element.setAttribute('download', 'livestream.ics');
+                    element.style.display = 'none';
+                    document.body.appendChild(element);
+                    element.click();
+                    document.body.removeChild(element);
+                }
+            });
+        }
+
         function backToIndex() {
             $("#artistContainer").show();
             $("#detailContainer").hide();

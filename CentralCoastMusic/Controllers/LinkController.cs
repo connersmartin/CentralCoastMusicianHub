@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CentralCoastMusic.Services;
 using CentralCoastMusic.Models;
+using System.Text;
 
 namespace CentralCoastMusic.Controllers
 {
@@ -13,6 +14,8 @@ namespace CentralCoastMusic.Controllers
         private readonly TagService _tagService;
         private readonly StreamService _streamService;
         private readonly ArtistService _artistService;
+        private string adminEmail= AppSettings.AppSetting["adminEmail"];
+        const string textLineFeed = @"\" + "n";
 
         public LinkController(TagService tagService,StreamService streamService,ArtistService artistService)
         {
@@ -32,7 +35,7 @@ namespace CentralCoastMusic.Controllers
             var streamResponse = await _streamService.GetStreams(auth["uid"]);
             var linkList = streamResponse.Select(l => l.Value).ToList();
             return PartialView(linkList);
-        }
+        }              
 
         public async Task<IActionResult> GetTags()
         {
@@ -103,29 +106,35 @@ namespace CentralCoastMusic.Controllers
 
         }
 
+        public async Task<string> GetStreamAttachment(string id)
+        {
+            var streamResponse = await _streamService.GetSingleStream(id);
+            return streamResponse.Calendar;
+        }
+
         public string PopulateCalendar(Artist artist, Stream stream)
         {
-            var calendar = @"BEGIN:VCALENDAR
-PRODID:-//Google Inc//Google Calendar 70.9054//EN
-
-VERSION:2.0
-CALSCALE:GREGORIAN
-METHOD:REQUEST
-BEGIN:VEVENT
-DTSTART:{3}
-DTEND:{4}
-ORGANIZER;CN=""{0}"":mailto:test@test.com
-DESCRIPTION:{1}:{2}
-SEQUENCE:0
-STATUS:CONFIRMED
-SUMMARY:{0} live at {2}
-TRANSP:OPAQUE
-END:VEVENT
-END:VCALENDAR";
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("BEGIN:VCALENDAR");
+            sb.AppendLine("PRODID:-//Google Inc//Google Calendar 70.9054//EN");
+            sb.AppendLine("VERSION:2.0");
+            sb.AppendLine("CALSCALE:GREGORIAN");
+            sb.AppendLine("METHOD:REQUEST");
+            sb.AppendLine("BEGIN:VEVENT");
+            sb.AppendLine("DTSTART:{3}");
+            sb.AppendLine("DTEND:{4}");
+            sb.AppendLine("ORGANIZER;CN={0}:mailto:{5}");
+            sb.AppendLine("DESCRIPTION:{1}:{2}");
+            sb.AppendLine("SEQUENCE:0");
+            sb.AppendLine("STATUS:CONFIRMED");
+            sb.AppendLine("SUMMARY:{0} live at {2}");
+            sb.AppendLine("TRANSP:OPAQUE");
+            sb.AppendLine("END:VEVENT");
+            sb.AppendLine("END:VCALENDAR");
             var startTime = stream.StartTime.ToString("yyyyMMddTHHmmss");
             var endTime = stream.EndTime.ToString("yyyyMMddTHHmmss");
 
-            var result = string.Format(calendar, artist.Name, stream.Name, stream.Description, startTime, endTime).Replace("\r\n","\\n");
+            var result = string.Format(sb.ToString(), artist.Name, stream.Name, stream.Description, startTime, endTime,adminEmail);
 
             return result;
         }
