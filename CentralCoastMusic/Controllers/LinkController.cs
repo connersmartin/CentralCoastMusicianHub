@@ -23,6 +23,11 @@ namespace CentralCoastMusic.Controllers
             _streamService = streamService;
             _artistService = artistService;
         }
+
+        /// <summary>
+        /// This gets the streams of the currently logged in artist
+        /// </summary>
+        /// <returns>a partial view of the streams</returns>
         public async Task<IActionResult> GetStreams()
         {
             HttpContext.Request.Cookies.TryGetValue("uid", out string user);
@@ -37,6 +42,10 @@ namespace CentralCoastMusic.Controllers
             return PartialView(linkList);
         }              
 
+        /// <summary>
+        /// This gets the tags of the currently logged in artist
+        /// </summary>
+        /// <returns>a partial view of the tags</returns>
         public async Task<IActionResult> GetTags()
         {
             HttpContext.Request.Cookies.TryGetValue("uid", out string user);
@@ -51,6 +60,11 @@ namespace CentralCoastMusic.Controllers
             return PartialView(tagList);
         }
 
+        /// <summary>
+        /// Adding a tag to a logged in artist
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <returns>tag's id</returns>
         public async Task<string> AddTag([FromBody] Tag tag)
         {
 
@@ -65,6 +79,11 @@ namespace CentralCoastMusic.Controllers
             return tagResponse;
         }
 
+        /// <summary>
+        /// Deletes the specified tag
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task RemoveTag(string id)
         {
             HttpContext.Request.Cookies.TryGetValue("uid", out string user);
@@ -76,7 +95,11 @@ namespace CentralCoastMusic.Controllers
             };            
             await _tagService.RemoveTag(new TagRequest() { Auth = auth, Tag = new Tag() { Id = id } });
         }
-
+        /// <summary>
+        /// Adds a stream to the logged in user
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns>the stream's id</returns>
         public async Task<string> AddStream([FromBody] Stream stream)
         {
             HttpContext.Request.Cookies.TryGetValue("uid", out string user);
@@ -92,7 +115,11 @@ namespace CentralCoastMusic.Controllers
 
             return response;
         }
-
+        /// <summary>
+        /// Deletes the specific stream
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task RemoveStream(string id)
         {
             HttpContext.Request.Cookies.TryGetValue("uid", out string user);
@@ -106,12 +133,23 @@ namespace CentralCoastMusic.Controllers
 
         }
 
+        /// <summary>
+        /// Gets the ics string of the stream
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<string> GetStreamAttachment(string id)
         {
             var streamResponse = await _streamService.GetSingleStream(id);
             return streamResponse.Calendar;
         }
 
+        /// <summary>
+        /// Creates the ics string for the stream
+        /// </summary>
+        /// <param name="artist"></param>
+        /// <param name="stream"></param>
+        /// <returns></returns>
         public string PopulateCalendar(Artist artist, Stream stream)
         {
             StringBuilder sb = new StringBuilder();

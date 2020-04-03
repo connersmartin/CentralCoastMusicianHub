@@ -11,6 +11,11 @@ namespace CentralCoastMusic.Services
     public class AuthService
     {
         private string jsonCred = AppSettings.AppSetting["authJsonCred"];
+        /// <summary>
+        /// Gets the token to do edits/deletes/logging in
+        /// </summary>
+        /// <param name="idToken"></param>
+        /// <returns></returns>
         public async Task<string> Google(string idToken)
         {
             //need to figure out how to log out of this though if even necessary

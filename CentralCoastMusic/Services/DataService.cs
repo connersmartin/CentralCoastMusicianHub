@@ -17,12 +17,18 @@ namespace CentralCoastMusic.Services
             _authService = authService;
         }
 
-        //How do I want to data?
         private HttpClient _client = new HttpClient();
         private string baseUrl = AppSettings.AppSetting["firebaseBaseUrl"];
 
-
         //TODO clean up and test
+        /// <summary>
+        /// This is the call where everything flows to get the data
+        /// </summary>
+        /// <param name="method"></param>
+        /// <param name="json"></param>
+        /// <param name="sub"></param>
+        /// <param name="auth"></param>
+        /// <returns></returns>
         public async Task<byte[]> ApiGoogle(string method, string json, string sub,
             Dictionary<string, string> auth)
         {
@@ -60,6 +66,7 @@ namespace CentralCoastMusic.Services
                         break;
                 }
             }
+            //for debugging purposes since we're returning a byte[]
             var debugText = await res.Content.ReadAsStringAsync();
             
             var interim = await res.Content.ReadAsByteArrayAsync();

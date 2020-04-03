@@ -34,7 +34,10 @@ namespace CentralCoastMusic.Controllers
             _streamService = streamService;
             _imageService = imageService;
         }
-
+        /// <summary>
+        /// Gets the login page for artists or returns their details if they're logged in
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             ViewData["jsSettings"] = AppSettings.AppSetting["jsSettings"];
@@ -47,10 +50,13 @@ namespace CentralCoastMusic.Controllers
             else
             {                
                 return View();
-            }
-            
+            }            
         }
 
+        /// <summary>
+        /// Gets the artist details of the person logged in
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Details()
         {
             var id = GetCookies();
@@ -67,12 +73,22 @@ namespace CentralCoastMusic.Controllers
             }
         }
 
+        /// <summary>
+        /// View to create an artist's profile
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Create()
         {
             var auth = GetCookies();
             return View();
         }
 
+        /// <summary>
+        /// Creates the artist from the provided form
+        /// Tags, Streams, and Images are created separately
+        /// </summary>
+        /// <param name="artist"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(Artist artist)
@@ -91,19 +107,39 @@ namespace CentralCoastMusic.Controllers
             }
             catch
             {
+                //TODO send in error back to view
                 return View();
             }
         }
 
+        /// <summary>
+        /// Edit the artist page, returns to detail page if not authorized
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<ActionResult> Edit(string id)
         {
-            var artist = await _artistService.GetArtist(id);
-            //ViewData["Tags"] = await _tagService.GetTags(id);
-            //ViewData["Streams"] = await _streamService.GetStreams(id);
+            var auth = GetCookies();
 
-            return View(artist);
+            if (auth["uid"]==id)
+            {
+                var artist = await _artistService.GetArtist(id);
+                //ViewData["Tags"] = await _tagService.GetTags(id);
+                //ViewData["Streams"] = await _streamService.GetStreams(id);
+                return View(artist);
+            }
+            else
+            {
+                return RedirectToAction("Detail", "Music",id);
+            }
+
         }
 
+        /// <summary>
+        /// Performs the artist edit
+        /// </summary>
+        /// <param name="artist"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(Artist artist)
@@ -112,6 +148,7 @@ namespace CentralCoastMusic.Controllers
             string imageUrl = null;
             try
             {
+                //We're not attaching the profile image url until this point. If you don't save, it gets orphaned
                 var imageId = await _imageService.GetProfileImage(artist.Id);
 
                 if (imageId!="")
@@ -132,19 +169,30 @@ namespace CentralCoastMusic.Controllers
             }
             catch
             {
+                //TODO errors
                 return View();
             }
         }    
+        /// <summary>
+        /// Privacy Policy
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Privacy()
         {
             return View();
         }
-
+        /// <summary>
+        /// Help page
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Help()
         {
             return View();
         }
-
+        /// <summary>
+        /// Removes the auth cookies
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Logout()
         {
             Remove("uid");

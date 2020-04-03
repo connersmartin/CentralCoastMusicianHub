@@ -24,28 +24,43 @@ namespace CentralCoastMusic.Controllers
             _artistService = artistService;
             _streamService = streamService;
         }
-
-        //Gets all artists
+        /// <summary>
+        /// First load grabs all artists
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Index()
         {
             return View();
         }
-
-        public async Task<IActionResult> GetArtists()
+        /// <summary>
+        /// Gets all the artists
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> GetArtists(int limit = 0, int offset=0)
         {
+            //TODO Paginate this... lazy load?
             var artists = await _artistService.GetArtists();
 
             artists = await _streamService.AddUpcomingStreamToArtists(artists);
             
             return PartialView(artists);
         }
+        /// <summary>
+        /// Searches artist names on a string
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> ArtistSearch(string id)
         {
             var artists = await _artistService.SearchArtists(id);
             artists = await _streamService.AddUpcomingStreamToArtists(artists);
             return PartialView("GetArtists", artists);
         }
-
+        /// <summary>
+        /// searches artists by tag
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> TagSearch(string id)
         {
             var artists = await _artistService.TagSearch(id);
@@ -53,12 +68,17 @@ namespace CentralCoastMusic.Controllers
             return PartialView("GetArtists", artists);
         }
 
-
+        /// <summary>
+        /// Get details of specific artist
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Details(string id)
         {
             var artist = await _artistService.GetArtist(id);
             if (artist != null)
             {
+                //adds streams to artist
                 var artists = await _streamService.AddUpcomingStreamToArtists(new List<Artist>() { artist});
 
                 return PartialView(artists.FirstOrDefault());
@@ -68,7 +88,10 @@ namespace CentralCoastMusic.Controllers
                 return RedirectToAction("Index");
             }
         }
-
+        /// <summary>
+        /// About section
+        /// </summary>
+        /// <returns></returns>
         public IActionResult About()
         {
             return View();

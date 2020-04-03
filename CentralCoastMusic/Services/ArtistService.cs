@@ -20,6 +20,7 @@ namespace CentralCoastMusic.Services
             _helper = helper;
         }
 
+        //Not currently used
         public async Task<List<string>> GetGenres()
         {
             var genreResponse = await _dataService.ApiGoogle("GET", null, "Genres", null);
@@ -27,16 +28,24 @@ namespace CentralCoastMusic.Services
             return genres;
 
         }
-
+        /// <summary>
+        /// Get single artist
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<Artist> GetArtist(string id = null)
         {
             var artistResponse = await _dataService.ApiGoogle("GET", null, "Artists/" + id, null);
             var artist = _helper.Mapper<Artist>(artistResponse);
             return artist;
         }
-
+        /// <summary>
+        /// Get all artists
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<Artist>> GetArtists()
         {
+            //TODO paginate?
             var artistResponse = await _dataService.ApiGoogle("GET", null, "Artists", null);
             var artists = _helper.Mapper<Dictionary<string, Artist>>(artistResponse);
 
@@ -46,7 +55,11 @@ namespace CentralCoastMusic.Services
 
             //return MockService.LoadJson();
         }
-
+        /// <summary>
+        /// Search artists
+        /// </summary>
+        /// <param name="searchText"></param>
+        /// <returns></returns>
         public async Task<List<Artist>> SearchArtists(string searchText)
         {
             var filteredArtists = new List<Artist>();
@@ -68,7 +81,11 @@ namespace CentralCoastMusic.Services
                 return filteredArtists;
             }
         }
-
+        /// <summary>
+        /// Search via tags
+        /// </summary>
+        /// <param name="searchText"></param>
+        /// <returns></returns>
         public async Task<List<Artist>> TagSearch(string searchText)
         {
             var filteredArtists = new List<Artist>();
@@ -85,9 +102,15 @@ namespace CentralCoastMusic.Services
                     if (tags!=null)
                     {
                         var tagList = tags.Select(t => t.Value.Name).ToList();
-                        if (tagList.Contains(searchText.ToLower()))
+                        foreach (var tag in tagList)
                         {
-                            filteredArtists.Add(artist);
+                            if (tag!=null)
+                            {
+                                if (tag.Contains(searchText.ToLower()))
+                                {
+                                    filteredArtists.Add(artist);
+                                }
+                            }
                         }
                     }
                 }
@@ -95,21 +118,30 @@ namespace CentralCoastMusic.Services
                 return filteredArtists;
             }
         }
-
-
-
+        
+        /// <summary>
+        /// Adds the artist
+        /// </summary>
+        /// <param name="artistRequest"></param>
+        /// <returns></returns>
         public async Task AddArtist(ArtistRequest artistRequest)
         {
             var json = JsonSerializer.Serialize(artistRequest.Artist);
             var artistResponse = await _dataService.ApiGoogle("PUT", json, "Artists/" + artistRequest.Auth["uid"], artistRequest.Auth);    
         }
 
+        /// <summary>
+        /// Edits the artist
+        /// </summary>
+        /// <param name="artistRequest"></param>
+        /// <returns></returns>
         public async Task EditArtist(ArtistRequest artistRequest)
         {
             var json = JsonSerializer.Serialize(artistRequest.Artist);
             var artistResponse = await _dataService.ApiGoogle("PATCH", json, "Artists/"+artistRequest.Auth["uid"], artistRequest.Auth);
         }
         /*
+        //Is this necessary?
         public async Task<List<Artist>> DeleteArtist(ArtistRequest artistRequest)
         {
             throw new NotImplementedException();

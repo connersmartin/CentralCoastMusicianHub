@@ -23,11 +23,11 @@ namespace CentralCoastMusic.Controllers
             _streamService = streamService;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
+        /// <summary>
+        /// Uploads the actual image file
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> UploadImage(string type)
         {
@@ -50,7 +50,12 @@ namespace CentralCoastMusic.Controllers
 
             return Ok();
         }
-
+        /// <summary>
+        /// Returns the image url for the image you're requesting
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<string> GetImage(string id, string type)
         {
@@ -69,14 +74,17 @@ namespace CentralCoastMusic.Controllers
             return _imageService.GetImage(type + "/" + imageId);
         }
 
+        /// <summary>
+        /// Removes the image for the logged in user
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         [HttpDelete]
         public async Task<ActionResult> RemoveImage(string type)
         {
             //Get file guid from profile id
             //Remove that image
-            //Remove that id         
-
-
+            //Remove that id                
             HttpContext.Request.Cookies.TryGetValue("uid", out string user);
             HttpContext.Request.Cookies.TryGetValue("token", out string token);
             var auth = new Dictionary<string, string>()
@@ -89,7 +97,6 @@ namespace CentralCoastMusic.Controllers
 
             _imageService.RemoveImage(type+"/"+imageId);
             await _imageService.RemoveProfileImage(auth, user);
-
 
             return Ok();
 
