@@ -10,11 +10,13 @@ namespace CentralCoastMusic.Services
     public class ArtistService
     {
         private readonly DataService _dataService;
+        private readonly TagService _tagService;
         private readonly Helper _helper;
 
-        public ArtistService(DataService dataService, Helper helper)
+        public ArtistService(DataService dataService, TagService tagService, Helper helper)
         {
             _dataService = dataService;
+            _tagService = tagService;
             _helper = helper;
         }
 
@@ -66,6 +68,35 @@ namespace CentralCoastMusic.Services
                 return filteredArtists;
             }
         }
+
+        public async Task<List<Artist>> TagSearch(string searchText)
+        {
+            var filteredArtists = new List<Artist>();
+            var artists = await GetArtists();
+            if (searchText == null)
+            {
+                return artists;
+            }
+            else
+            {
+                foreach (var artist in artists)
+                {
+                    var tags = await _tagService.GetTags(artist.Id);
+                    if (tags!=null)
+                    {
+                        var tagList = tags.Select(t => t.Value.Name).ToList();
+                        if (tagList.Contains(searchText.ToLower()))
+                        {
+                            filteredArtists.Add(artist);
+                        }
+                    }
+                }
+
+                return filteredArtists;
+            }
+        }
+
+
 
         public async Task AddArtist(ArtistRequest artistRequest)
         {

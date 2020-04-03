@@ -39,9 +39,16 @@ namespace CentralCoastMusic.Controllers
             
             return PartialView(artists);
         }
-        public async Task<IActionResult> Search(string id)
+        public async Task<IActionResult> ArtistSearch(string id)
         {
             var artists = await _artistService.SearchArtists(id);
+            artists = await _streamService.AddUpcomingStreamToArtists(artists);
+            return PartialView("GetArtists", artists);
+        }
+
+        public async Task<IActionResult> TagSearch(string id)
+        {
+            var artists = await _artistService.TagSearch(id);
             artists = await _streamService.AddUpcomingStreamToArtists(artists);
             return PartialView("GetArtists", artists);
         }

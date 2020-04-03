@@ -1,7 +1,9 @@
 ﻿@{
     ViewData["Title"] = "Central Coast Musician Hub";
 }
-<div><input id="search" /></div>
+<div><input id="search" placeholder="artist search" /></div>
+<div><input id="tagSearch" placeholder="tag search" /></div>
+
 <div id="artistContainer">
 
 </div>
@@ -14,32 +16,38 @@
         $("#artistContainer").html("This may take a while, be patient");
         $.ajax({
             url: '/Music/GetArtists',
-            success: function(data) {
+            success: function (data) {
                 $("#artistContainer").html(data);
             },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
                 $("#artistContainer")
                     .html("Oops, something went wrong, please try again: " + XMLHttpRequest.responseText);
             }
         });
 
-        
+
         $('#search').keyup(function (e) {
-            
-                searchArtist($('#search').val().trim());
-            
+
+            searchArtist($('#search').val().trim());
+
+        });
+
+        $('#tagSearch').keyup(function (e) {
+
+            tagSearch($('#tagSearch').val().trim());
+
         });
 
         function getDetail(id) {
             $("#artistContainer").hide();
             $.ajax({
                 url: '/Music/Details/' + id,
-                success: function(data) {
+                success: function (data) {
                     $("#detailContainer").html(data);
                     $("#detailContainer").show();
 
                 },
-                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
                     $("#detailContainer")
                         .html("Oops, something went wrong, please try again: " + XMLHttpRequest.responseText);
                     $("#detailContainer").show();
@@ -69,17 +77,29 @@
         }
 
         function searchArtist(searchText) {
-           
-        $.ajax({
-            url: '/Music/Search/'+searchText,
-            success: function(data) {
-                $("#artistContainer").html(data);
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-                $("#artistContainer")
-                    .html("Oops, something went wrong, please try again: " + XMLHttpRequest.responseText);
-            }
-        });
+            $.ajax({
+                url: '/Music/ArtistSearch/' + searchText,
+                success: function (data) {
+                    $("#artistContainer").html(data);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $("#artistContainer")
+                        .html("Oops, something went wrong, please try again: " + XMLHttpRequest.responseText);
+                }
+            });
+        }
+
+        function tagSearch(searchText) {
+            $.ajax({
+                url: '/Music/TagSearch/' + searchText,
+                success: function (data) {
+                    $("#artistContainer").html(data);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $("#artistContainer")
+                        .html("Oops, something went wrong, please try again: " + XMLHttpRequest.responseText);
+                }
+            });
         }
     </script>
 }

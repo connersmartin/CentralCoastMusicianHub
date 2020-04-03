@@ -126,9 +126,6 @@ namespace CentralCoastMusic.Controllers
                     Auth = auth,
                     Artist = artist
                 };
-
-
-
                 await _artistService.EditArtist(artistRequest);
                 
                 return RedirectToAction("Details");
